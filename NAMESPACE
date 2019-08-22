@@ -1,0 +1,3 @@
+useDynLib(tree.interpreter, .registration=TRUE)
+exportPattern("^[[:alpha:]]+")
+importFrom(Rcpp, evalCpp)

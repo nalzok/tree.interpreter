@@ -1,0 +1,13 @@
+Package: tree.interpreter
+Type: Package
+Title: Decompose Random Forest Prediction into Bias and Feature Contribution
+Version: 1.0
+Date: 2019-08-21
+Author: Qingyao Sun
+Maintainer: Qingyao Sun <nalzok@lbl.gov>
+Description: An R implementation of the treeinterpreter package on PyPI. Each
+        prediction is decomposed as prediction = bias + feature_1_contribution
+        + ... + feature_n_contribution.
+License: MIT + file LICENSE
+Imports: Rcpp (>= 1.0.2)
+LinkingTo: Rcpp
