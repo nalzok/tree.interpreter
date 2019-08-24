@@ -5,19 +5,34 @@
 
 using namespace Rcpp;
 
-// rcpp_hello_world
-List rcpp_hello_world();
-RcppExport SEXP _tree_interpreter_rcpp_hello_world() {
+// annotateHierarchicalPrediction_randomForest
+Rcpp::List annotateHierarchicalPrediction_randomForest(const Rcpp::List rf, const Rcpp::DataFrame oldX);
+RcppExport SEXP _tree_interpreter_annotateHierarchicalPrediction_randomForest(SEXP rfSEXP, SEXP oldXSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
-    rcpp_result_gen = Rcpp::wrap(rcpp_hello_world());
+    Rcpp::traits::input_parameter< const Rcpp::List >::type rf(rfSEXP);
+    Rcpp::traits::input_parameter< const Rcpp::DataFrame >::type oldX(oldXSEXP);
+    rcpp_result_gen = Rcpp::wrap(annotateHierarchicalPrediction_randomForest(rf, oldX));
+    return rcpp_result_gen;
+END_RCPP
+}
+// annotateHierarchicalPrediction_ranger
+Rcpp::List annotateHierarchicalPrediction_ranger(const Rcpp::List rf, const Rcpp::DataFrame oldX);
+RcppExport SEXP _tree_interpreter_annotateHierarchicalPrediction_ranger(SEXP rfSEXP, SEXP oldXSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< const Rcpp::List >::type rf(rfSEXP);
+    Rcpp::traits::input_parameter< const Rcpp::DataFrame >::type oldX(oldXSEXP);
+    rcpp_result_gen = Rcpp::wrap(annotateHierarchicalPrediction_ranger(rf, oldX));
     return rcpp_result_gen;
 END_RCPP
 }
 
 static const R_CallMethodDef CallEntries[] = {
-    {"_tree_interpreter_rcpp_hello_world", (DL_FUNC) &_tree_interpreter_rcpp_hello_world, 0},
+    {"_tree_interpreter_annotateHierarchicalPrediction_randomForest", (DL_FUNC) &_tree_interpreter_annotateHierarchicalPrediction_randomForest, 2},
+    {"_tree_interpreter_annotateHierarchicalPrediction_ranger", (DL_FUNC) &_tree_interpreter_annotateHierarchicalPrediction_ranger, 2},
     {NULL, NULL, 0}
 };
 
