@@ -2,16 +2,22 @@
 #include <Rcpp.h>
 
 // [[Rcpp::export]]
-Rcpp::List annotateHierarchicalPrediction_randomForest(
-        const Rcpp::List rf,
-        const Rcpp::DataFrame oldX) {
+Rcpp::List annotateNodeSizeCpp_randomForest(
+        const Rcpp::List& rf,
+        const Rcpp::DataFrame& oldX) {
     return rf;
 }
 
 // [[Rcpp::export]]
-Rcpp::List annotateHierarchicalPrediction_ranger(
-        const Rcpp::List rf,
-        const Rcpp::DataFrame oldX) {
+Rcpp::List annotateHierarchicalPredictionCpp_randomForest(
+        const Rcpp::List& rf) {
+    return rf;
+}
+
+// [[Rcpp::export]]
+Rcpp::List annotateNodeSizeCpp_ranger(
+        const Rcpp::List& rf,
+        const Rcpp::DataFrame& oldX) {
 
     if (strcmp(rf["treetype"], "Regression")) {
         Rcpp::stop("Only regression trees are supported at the moment.");
@@ -67,6 +73,13 @@ Rcpp::List annotateHierarchicalPrediction_ranger(
 
     forest["node.sizes"] = node_sizes_forest;
     rf["forest"] = forest;
+
+    return rf;
+}
+
+// [[Rcpp::export]]
+Rcpp::List annotateHierarchicalPredictionCpp_ranger(
+        const Rcpp::List& rf) {
     return rf;
 }
 
