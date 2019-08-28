@@ -5,6 +5,11 @@ library(tree.interpreter)
 set.seed(42L)
 data(Boston)
 rf <- ranger(medv ~ ., Boston)
+
 rfNodeSize <- annotateNodeSize(rf, Boston[, -14])
 str(rfNodeSize$forest$node.sizes)
 class(rfNodeSize)
+
+rfHierPred <- annotateHierarchicalPrediction(rfNodeSize)
+str(rfHierPred$forest$hierarchical.predictions)
+class(rfHierPred)

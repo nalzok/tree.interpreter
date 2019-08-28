@@ -5,19 +5,28 @@
 #' @useDynLib tree.interpreter
 #' @importFrom Rcpp sourceCpp
 annotateHierarchicalPrediction <- function(x, ...) {
+
+    if (any(class(rf) == 'hier.pred.annotated')) {
+        return(rf)
+    }
+
     UseMethod('annotateHierarchicalPrediction')
 }
 
 #' @export
 annotateHierarchicalPrediction.randomForest <- function(rf, oldX=NULL) {
     rf <- annotateNodeSize(rf, oldX)
-    annotateHierarchicalPrediction_randomForest(rf)
+    rf <- annotateHierarchicalPredictionCpp_randomForest(rf)
+    class(rf) <- c(class(rf), 'hier.pred.annotated')
+    return(rf)
 }
 
 #' @export
 annotateHierarchicalPrediction.ranger <- function(rf, oldX=NULL) {
     rf <- annotateNodeSize(rf, oldX)
-    annotateHierarchicalPrediction_ranger(rf)
+    rf <- annotateHierarchicalPredictionCpp_ranger(rf)
+    class(rf) <- c(class(rf), 'hier.pred.annotated')
+    return(rf)
 }
         
 #' Annotate Node Size

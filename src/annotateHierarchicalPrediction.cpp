@@ -1,4 +1,5 @@
 #include <cstring>
+#include <stack>
 #include <Rcpp.h>
 
 // [[Rcpp::export]]
@@ -24,21 +25,21 @@ Rcpp::List annotateNodeSizeCpp_ranger(
     }
 
     const int num_trees = rf["num.trees"];
-    Rcpp::List forest = rf["forest"];
-    Rcpp::List children_forest = forest["child.nodeIDs"];
-    Rcpp::List split_var_IDs_forest = forest["split.varIDs"];
-    Rcpp::List split_values_forest = forest["split.values"];
-    Rcpp::CharacterVector independent_variable_names =
+    const Rcpp::List forest = rf["forest"];
+    const Rcpp::List children_forest = forest["child.nodeIDs"];
+    const Rcpp::List split_var_IDs_forest = forest["split.varIDs"];
+    const Rcpp::List split_values_forest = forest["split.values"];
+    const Rcpp::CharacterVector independent_variable_names =
         forest["independent.variable.names"];
 
     Rcpp::List node_sizes_forest(num_trees);
 
     for (int tree = 0; tree < num_trees; tree++) {
-        Rcpp::List children = children_forest[tree];
-        Rcpp::IntegerVector left_children = children[0];
-        Rcpp::IntegerVector right_children = children[1];
-        Rcpp::IntegerVector split_var_IDs = split_var_IDs_forest[tree];
-        Rcpp::NumericVector split_values = split_values_forest[tree];
+        const Rcpp::List children = children_forest[tree];
+        const Rcpp::IntegerVector left_children = children[0];
+        const Rcpp::IntegerVector right_children = children[1];
+        const Rcpp::IntegerVector split_var_IDs = split_var_IDs_forest[tree];
+        const Rcpp::NumericVector split_values = split_values_forest[tree];
 
         Rcpp::IntegerVector node_sizes(split_values.size());
         node_sizes[0] = oldX.nrows();
@@ -48,7 +49,7 @@ Rcpp::List annotateNodeSizeCpp_ranger(
             while (left_children[node_id] || right_children[node_id]) {
 
                 const int split_var_ID = split_var_IDs[node_id] - 1;
-                const double split_value = split_values[split_var_ID];
+                const double split_value = split_values[node_id];
 
                 const std::string independent_variable_name =
                     Rcpp::as<std::string>(
@@ -80,6 +81,53 @@ Rcpp::List annotateNodeSizeCpp_ranger(
 // [[Rcpp::export]]
 Rcpp::List annotateHierarchicalPredictionCpp_ranger(
         const Rcpp::List& rf) {
+
+    if (strcmp(rf["treetype"], "Regression")) {
+        Rcpp::stop("Only regression trees are supported at the moment.");
+    }
+
+    const int num_trees = rf["num.trees"];
+    const Rcpp::List forest = rf["forest"];
+    const Rcpp::List children_forest = forest["child.nodeIDs"];
+    const Rcpp::List split_values_forest = forest["split.values"];
+    const Rcpp::List node_sizes_forest = forest["node.sizes"];
+
+    Rcpp::List hierarchical_predictions_forest(num_trees);
+
+    for (int tree = 0; tree < num_trees; tree++) {
+        const Rcpp::List children = children_forest[tree];
+        const Rcpp::IntegerVector left_children = children[0];
+        const Rcpp::IntegerVector right_children = children[1];
+        const Rcpp::NumericVector split_values = split_values_forest[tree];
+        const Rcpp::IntegerVector node_sizes = node_sizes_forest[tree];
+
+        Rcpp::NumericVector hierarchical_predictions(
+                split_values.size(), NA_REAL
+                );
+
+        for (int node = split_values.size() - 1; node >= 0; node--) {
+            const int left_child = left_children[node];
+            const int right_child = right_children[node];
+            if (!left_child && !right_child) {
+                // For a terminal node, split_value contains its estimation.
+                // An inelegant hack in ranger, I would say...
+                hierarchical_predictions[node] = split_values[node];
+            } else {
+                hierarchical_predictions[node] =
+                    (hierarchical_predictions[left_child]
+                     * node_sizes[left_child]
+                     + hierarchical_predictions[right_child]
+                     * node_sizes[right_child])
+                    / (node_sizes[left_child] + node_sizes[right_child]);
+            }
+        }
+
+        hierarchical_predictions_forest[tree] = hierarchical_predictions;
+    }
+
+    forest["hierarchical.predictions"] = hierarchical_predictions_forest;
+    rf["forest"] = forest;
+
     return rf;
 }
 
