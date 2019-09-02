@@ -31,6 +31,10 @@ Rcpp::List annotateHierarchicalPredictionCpp_ranger(
     const Rcpp::CharacterVector independent_variable_names =
         forest["independent.variable.names"];
 
+    // We'll use one and only one of these
+    Rcpp::NumericVector numeric_responses = trainY[0];
+    Rcpp::NumericVector factor_responses = trainY[0];
+
     Rcpp::List hierarchical_predictions_ensemble(num_trees);
 
     for (int tree = 0; tree < num_trees; tree++) {
@@ -74,13 +78,11 @@ Rcpp::List annotateHierarchicalPredictionCpp_ranger(
                     = hierarchical_predictions(node_id, Rcpp::_);
                 if (n_classes == 1) {
                     // Regression
-                    Rcpp::NumericVector responses = trainY[0];
                     hierarchical_predictions(node_id, 0)
-                        += responses[x] * inbag_count;
+                        += numeric_responses[x] * inbag_count;
                 } else {
                     // Classification
-                    Rcpp::IntegerVector responses = trainY[0];
-                    hierarchical_predictions(node_id, responses[x] - 1)
+                    hierarchical_predictions(node_id, factor_responses[x] - 1)
                         += inbag_count;
                 }
             }
