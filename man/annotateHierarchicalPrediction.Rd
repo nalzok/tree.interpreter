@@ -4,7 +4,7 @@
 \alias{annotateHierarchicalPrediction}
 \title{Annotate Hierarchical Prediction}
 \usage{
-annotateHierarchicalPrediction(x, ...)
+annotateHierarchicalPrediction(rf, oldX)
 }
 \description{
 Annotate Hierarchical Prediction

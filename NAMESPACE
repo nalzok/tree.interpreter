@@ -2,9 +2,6 @@
 
 S3method(annotateHierarchicalPrediction,randomForest)
 S3method(annotateHierarchicalPrediction,ranger)
-S3method(annotateNodeSize,randomForest)
-S3method(annotateNodeSize,ranger)
 export(annotateHierarchicalPrediction)
-export(annotateNodeSize)
 importFrom(Rcpp,sourceCpp)
 useDynLib(tree.interpreter)
