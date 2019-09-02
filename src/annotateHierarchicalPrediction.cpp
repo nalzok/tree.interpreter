@@ -50,6 +50,15 @@ Rcpp::List annotateHierarchicalPredictionCpp_ranger(
 
         Rcpp::NumericMatrix hierarchical_predictions(num_nodes, n_classes);
 
+        Rcpp::IntegerVector rownames
+            = Rcpp::seq_len(num_nodes) - 1;
+        Rcpp::CharacterVector colnames
+            = (n_classes == 1)
+            ? Rcpp::CharacterVector("Response")
+            : factor_responses.attr("levels");
+        hierarchical_predictions.attr("dimnames")
+            = Rcpp::List::create(rownames, colnames);
+
         for (int x = 0; x < inbag_counts.size(); x++) {
             const int inbag_count = inbag_counts[x];
 

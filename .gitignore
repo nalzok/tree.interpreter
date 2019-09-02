@@ -127,3 +127,5 @@ tags
 [._]*.un~
 
 # End of https://www.gitignore.io/api/r,vim,c++,macos
+
+**/*.tmp
