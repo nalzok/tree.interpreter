@@ -5,15 +5,15 @@
 
 using namespace Rcpp;
 
-// decomposePrediction
-Rcpp::DataFrame decomposePrediction(const Rcpp::List delta_node_responses, const Rcpp::DataFrame testX);
-RcppExport SEXP _tree_interpreter_decomposePrediction(SEXP delta_node_responsesSEXP, SEXP testXSEXP) {
+// decomposedPredictionCpp
+Rcpp::List decomposedPredictionCpp(const Rcpp::List delta_node_responses, const Rcpp::DataFrame testX);
+RcppExport SEXP _tree_interpreter_decomposedPredictionCpp(SEXP delta_node_responsesSEXP, SEXP testXSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< const Rcpp::List >::type delta_node_responses(delta_node_responsesSEXP);
     Rcpp::traits::input_parameter< const Rcpp::DataFrame >::type testX(testXSEXP);
-    rcpp_result_gen = Rcpp::wrap(decomposePrediction(delta_node_responses, testX));
+    rcpp_result_gen = Rcpp::wrap(decomposedPredictionCpp(delta_node_responses, testX));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -47,7 +47,7 @@ END_RCPP
 }
 
 static const R_CallMethodDef CallEntries[] = {
-    {"_tree_interpreter_decomposePrediction", (DL_FUNC) &_tree_interpreter_decomposePrediction, 2},
+    {"_tree_interpreter_decomposedPredictionCpp", (DL_FUNC) &_tree_interpreter_decomposedPredictionCpp, 2},
     {"_tree_interpreter_deltaNodeResponseCpp_randomForest", (DL_FUNC) &_tree_interpreter_deltaNodeResponseCpp_randomForest, 4},
     {"_tree_interpreter_deltaNodeResponseCpp_ranger", (DL_FUNC) &_tree_interpreter_deltaNodeResponseCpp_ranger, 4},
     {NULL, NULL, 0}

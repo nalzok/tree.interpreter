@@ -11,7 +11,6 @@ Rcpp::List deltaNodeResponseCpp_randomForest(
     return rf;
 }
 
-
 // [[Rcpp::export]]
 Rcpp::List deltaNodeResponseCpp_ranger(
         const Rcpp::List& rf,
@@ -74,14 +73,11 @@ Rcpp::List deltaNodeResponseCpp_ranger(
 
         Rcpp::NumericMatrix delta_node_responses(num_nodes, n_classes);
 
-        Rcpp::IntegerVector rownames
-            = Rcpp::seq_len(num_nodes) - 1;
-        Rcpp::CharacterVector colnames
-            = (n_classes == 1)
+        const Rcpp::IntegerVector rownames = Rcpp::seq_len(num_nodes) - 1;
+        Rcpp::rownames(delta_node_responses) = rownames;
+        Rcpp::colnames(delta_node_responses) = (n_classes == 1)
             ? Rcpp::CharacterVector("Response")
             : factor_responses.attr("levels");
-        delta_node_responses.attr("dimnames")
-            = Rcpp::List::create(rownames, colnames);
 
         for (int x = 0; x < inbag_counts.size(); x++) {
             const int inbag_count = inbag_counts[x];
@@ -147,6 +143,7 @@ Rcpp::List deltaNodeResponseCpp_ranger(
     return Rcpp::List::create(
             Rcpp::Named("n.classes") = n_classes,
             Rcpp::Named("num.trees") = num_trees,
+            Rcpp::Named("variable.names") = independent_variable_names,
             Rcpp::Named("left.children") = left_children_ensemble,
             Rcpp::Named("right.children") = right_children_ensemble,
             Rcpp::Named("split.variables") = split_variables_ensemble,

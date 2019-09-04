@@ -1,4 +1,3 @@
-library(MASS)
 library(ranger)
 
 test_that('deltaNodeResponse works for classification tree', {
@@ -9,6 +8,8 @@ test_that('deltaNodeResponse works for classification tree', {
   expect_equal(colnames(delta.node.resp$delta.node.resp[[1]]),
                levels(iris$Species))
 })
+
+library(MASS)
 
 test_that('deltaNodeResponse works for regression tree', {
   set.seed(42L)
