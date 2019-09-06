@@ -27,6 +27,10 @@ Rcpp::List decomposedPredictionCpp(
     for (int x = 0; x < num_X; x++) {
         Rcpp::NumericMatrix decomposed_prediction_forest(
                 n_classes, num_variables);
+        Rcpp::rownames(decomposed_prediction_forest)
+            = Rcpp::rownames(delta_node_responses_ensemble[0]);
+        Rcpp::colnames(decomposed_prediction_forest)
+            = variable_names;
 
         for (int tree = 0; tree < num_trees; tree++) {
             const Rcpp::IntegerVector left_children
@@ -51,33 +55,32 @@ Rcpp::List decomposedPredictionCpp(
                 node_id = (value <= split_value) ?
                     left_children[node_id] : right_children[node_id];
 
-                decomposed_prediction_forest(Rcpp::_, split_variable)
-                    = decomposed_prediction_forest(Rcpp::_, split_variable)
-                    + delta_node_responses(Rcpp::_, node_id);
+                decomposed_prediction_forest.column(split_variable)
+                    = decomposed_prediction_forest.column(split_variable)
+                    + delta_node_responses.column(node_id);
             }
         }
 
-        decomposed_prediction_forest
-            = decomposed_prediction_forest / num_trees;
+        Rcpp::NumericVector alias_decomposed_prediction_forest
+            = decomposed_prediction_forest;
+        alias_decomposed_prediction_forest
+            = alias_decomposed_prediction_forest / num_trees;
 
-        Rcpp::rownames(decomposed_prediction_forest)
-            = Rcpp::rownames(delta_node_responses_ensemble[0]);
-        Rcpp::colnames(decomposed_prediction_forest)
-            = variable_names;
         decomposed_prediction_forest_list[x] = decomposed_prediction_forest;
     }
 
 
     Rcpp::NumericMatrix bias(n_classes, 1);
+    Rcpp::rownames(bias) = Rcpp::rownames(delta_node_responses_ensemble[0]);
+    Rcpp::colnames(bias) = Rcpp::CharacterVector::create("Bias");
     for (int tree = 0; tree < num_trees; tree++) {
         const Rcpp::NumericMatrix delta_node_responses
             = delta_node_responses_ensemble[tree];
-        bias += delta_node_responses(Rcpp::_, 0);
+        bias += delta_node_responses.column(0);
     }
-    bias = bias / num_trees;
+    Rcpp::NumericVector alias_bias = bias;
+    alias_bias = alias_bias / num_trees;
 
-    Rcpp::rownames(bias) = Rcpp::rownames(delta_node_responses_ensemble[0]);
-    Rcpp::colnames(bias) = Rcpp::CharacterVector::create("Bias");
     decomposed_prediction_forest_list.attr("bias") = bias;
 
 

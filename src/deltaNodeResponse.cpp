@@ -72,7 +72,6 @@ Rcpp::List deltaNodeResponseCpp_ranger(
         Rcpp::IntegerVector node_sizes(num_nodes);
 
         Rcpp::NumericMatrix delta_node_responses(n_classes, num_nodes);
-
         Rcpp::rownames(delta_node_responses) = (n_classes == 1)
             ? Rcpp::CharacterVector("Response")
             : factor_responses.attr("levels");
@@ -115,23 +114,23 @@ Rcpp::List deltaNodeResponseCpp_ranger(
             const int left_child = left_children[node];
             const int right_child = right_children[node];
             if (!left_child && !right_child) {
-                delta_node_responses(Rcpp::_, node) =
-                    delta_node_responses(Rcpp::_, node) / node_sizes[node];
+                delta_node_responses.column(node) =
+                    delta_node_responses.column(node) / node_sizes[node];
             } else {
-                delta_node_responses(Rcpp::_, node)
-                    = (delta_node_responses(Rcpp::_, left_child)
+                delta_node_responses.column(node)
+                    = (delta_node_responses.column(left_child)
                             * node_sizes[left_child]
-                            + delta_node_responses(Rcpp::_, right_child)
+                            + delta_node_responses.column(right_child)
                             * node_sizes[right_child])
                     / (node_sizes[left_child] + node_sizes[right_child]);
 
-                delta_node_responses(Rcpp::_, left_child)
-                    = delta_node_responses(Rcpp::_, left_child)
-                    - delta_node_responses(Rcpp::_, node);
+                delta_node_responses.column(left_child)
+                    = delta_node_responses.column(left_child)
+                    - delta_node_responses.column(node);
 
-                delta_node_responses(Rcpp::_, right_child)
-                    = delta_node_responses(Rcpp::_, right_child)
-                    - delta_node_responses(Rcpp::_, node);
+                delta_node_responses.column(right_child)
+                    = delta_node_responses.column(right_child)
+                    - delta_node_responses.column(node);
             }
         }
 
