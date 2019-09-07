@@ -5,18 +5,6 @@
 
 using namespace Rcpp;
 
-// decomposedPredictionCpp
-Rcpp::List decomposedPredictionCpp(const Rcpp::List delta_node_responses, const Rcpp::DataFrame testX);
-RcppExport SEXP _tree_interpreter_decomposedPredictionCpp(SEXP delta_node_responsesSEXP, SEXP testXSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< const Rcpp::List >::type delta_node_responses(delta_node_responsesSEXP);
-    Rcpp::traits::input_parameter< const Rcpp::DataFrame >::type testX(testXSEXP);
-    rcpp_result_gen = Rcpp::wrap(decomposedPredictionCpp(delta_node_responses, testX));
-    return rcpp_result_gen;
-END_RCPP
-}
 // deltaNodeResponseCpp_randomForest
 Rcpp::List deltaNodeResponseCpp_randomForest(const Rcpp::List& rf, const Rcpp::DataFrame& trainX, const Rcpp::DataFrame& trainY, const Rcpp::List& inbag_counts);
 RcppExport SEXP _tree_interpreter_deltaNodeResponseCpp_randomForest(SEXP rfSEXP, SEXP trainXSEXP, SEXP trainYSEXP, SEXP inbag_countsSEXP) {
@@ -45,11 +33,35 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// featureContributionCpp
+Rcpp::List featureContributionCpp(const Rcpp::List delta_node_responses, const Rcpp::DataFrame testX);
+RcppExport SEXP _tree_interpreter_featureContributionCpp(SEXP delta_node_responsesSEXP, SEXP testXSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< const Rcpp::List >::type delta_node_responses(delta_node_responsesSEXP);
+    Rcpp::traits::input_parameter< const Rcpp::DataFrame >::type testX(testXSEXP);
+    rcpp_result_gen = Rcpp::wrap(featureContributionCpp(delta_node_responses, testX));
+    return rcpp_result_gen;
+END_RCPP
+}
+// trainsetBiasCpp
+Rcpp::NumericMatrix trainsetBiasCpp(const Rcpp::List delta_node_responses);
+RcppExport SEXP _tree_interpreter_trainsetBiasCpp(SEXP delta_node_responsesSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< const Rcpp::List >::type delta_node_responses(delta_node_responsesSEXP);
+    rcpp_result_gen = Rcpp::wrap(trainsetBiasCpp(delta_node_responses));
+    return rcpp_result_gen;
+END_RCPP
+}
 
 static const R_CallMethodDef CallEntries[] = {
-    {"_tree_interpreter_decomposedPredictionCpp", (DL_FUNC) &_tree_interpreter_decomposedPredictionCpp, 2},
     {"_tree_interpreter_deltaNodeResponseCpp_randomForest", (DL_FUNC) &_tree_interpreter_deltaNodeResponseCpp_randomForest, 4},
     {"_tree_interpreter_deltaNodeResponseCpp_ranger", (DL_FUNC) &_tree_interpreter_deltaNodeResponseCpp_ranger, 4},
+    {"_tree_interpreter_featureContributionCpp", (DL_FUNC) &_tree_interpreter_featureContributionCpp, 2},
+    {"_tree_interpreter_trainsetBiasCpp", (DL_FUNC) &_tree_interpreter_trainsetBiasCpp, 1},
     {NULL, NULL, 0}
 };
 

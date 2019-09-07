@@ -1,7 +1,7 @@
 #include <Rcpp.h>
 
 // [[Rcpp::export]]
-Rcpp::List decomposedPredictionCpp(
+Rcpp::List featureContributionCpp(
         const Rcpp::List delta_node_responses,
         const Rcpp::DataFrame testX) {
 
@@ -22,14 +22,14 @@ Rcpp::List decomposedPredictionCpp(
 
     const int num_X = testX.nrows();
     const int num_variables = testX.size();
-    Rcpp::List decomposed_prediction_forest_list(num_X);
+    Rcpp::List feature_contribution_forest_list(num_X);
 
     for (int x = 0; x < num_X; x++) {
-        Rcpp::NumericMatrix decomposed_prediction_forest(
+        Rcpp::NumericMatrix feature_contribution_forest(
                 n_classes, num_variables);
-        Rcpp::rownames(decomposed_prediction_forest)
+        Rcpp::rownames(feature_contribution_forest)
             = Rcpp::rownames(delta_node_responses_ensemble[0]);
-        Rcpp::colnames(decomposed_prediction_forest)
+        Rcpp::colnames(feature_contribution_forest)
             = variable_names;
 
         for (int tree = 0; tree < num_trees; tree++) {
@@ -55,34 +55,41 @@ Rcpp::List decomposedPredictionCpp(
                 node_id = (value <= split_value) ?
                     left_children[node_id] : right_children[node_id];
 
-                decomposed_prediction_forest.column(split_variable)
-                    = decomposed_prediction_forest.column(split_variable)
+                feature_contribution_forest.column(split_variable)
+                    = feature_contribution_forest.column(split_variable)
                     + delta_node_responses.column(node_id);
             }
         }
 
-        Rcpp::NumericVector alias_decomposed_prediction_forest
-            = decomposed_prediction_forest;
-        alias_decomposed_prediction_forest
-            = alias_decomposed_prediction_forest / num_trees;
+        Rcpp::NumericVector alias_feature_contribution_forest
+            = feature_contribution_forest;
+        alias_feature_contribution_forest
+            = alias_feature_contribution_forest / num_trees;
 
-        decomposed_prediction_forest_list[x] = decomposed_prediction_forest;
+        feature_contribution_forest_list[x] = feature_contribution_forest;
     }
 
+    return feature_contribution_forest_list;
+}
 
-    Rcpp::NumericMatrix bias(n_classes, 1);
-    Rcpp::rownames(bias) = Rcpp::rownames(delta_node_responses_ensemble[0]);
-    Rcpp::colnames(bias) = Rcpp::CharacterVector::create("Bias");
+// [[Rcpp::export]]
+Rcpp::NumericMatrix trainsetBiasCpp(const Rcpp::List delta_node_responses) {
+    const int n_classes = delta_node_responses["n.classes"];
+    const int num_trees = delta_node_responses["num.trees"];
+    const Rcpp::List delta_node_responses_ensemble
+        = delta_node_responses["delta.node.resp"];
+
+    Rcpp::NumericMatrix trainset_bias(n_classes, 1);
+    Rcpp::rownames(trainset_bias)
+        = Rcpp::rownames(delta_node_responses_ensemble[0]);
+    Rcpp::colnames(trainset_bias) = Rcpp::CharacterVector::create("Bias");
     for (int tree = 0; tree < num_trees; tree++) {
         const Rcpp::NumericMatrix delta_node_responses
             = delta_node_responses_ensemble[tree];
-        bias += delta_node_responses.column(0);
+        trainset_bias += delta_node_responses.column(0);
     }
-    Rcpp::NumericVector alias_bias = bias;
-    alias_bias = alias_bias / num_trees;
+    Rcpp::NumericVector alias_trainset_bias = trainset_bias;
+    alias_trainset_bias = alias_trainset_bias / num_trees;
 
-    decomposed_prediction_forest_list.attr("bias") = bias;
-
-
-    return decomposed_prediction_forest_list;
+    return trainset_bias;
 }
