@@ -72,7 +72,6 @@ Rcpp::List deltaNodeResponseCpp_ranger(
         Rcpp::IntegerVector node_sizes(num_nodes);
 
         Rcpp::NumericMatrix delta_node_responses(num_nodes, n_classes);
-
         const Rcpp::IntegerVector rownames = Rcpp::seq_len(num_nodes) - 1;
         Rcpp::rownames(delta_node_responses) = rownames;
         Rcpp::colnames(delta_node_responses) = (n_classes == 1)
@@ -100,7 +99,7 @@ Rcpp::List deltaNodeResponseCpp_ranger(
                 }
 
                 Rcpp::NumericVector delta_node_response
-                    = delta_node_responses(node_id, Rcpp::_);
+                    = delta_node_responses.row(node_id);
                 if (n_classes == 1) {
                     // Regression
                     delta_node_responses(node_id, 0)
@@ -117,23 +116,23 @@ Rcpp::List deltaNodeResponseCpp_ranger(
             const int left_child = left_children[node];
             const int right_child = right_children[node];
             if (!left_child && !right_child) {
-                delta_node_responses(node, Rcpp::_) =
-                    delta_node_responses(node, Rcpp::_) / node_sizes[node];
+                delta_node_responses.row(node) =
+                    delta_node_responses.row(node) / node_sizes[node];
             } else {
-                delta_node_responses(node, Rcpp::_)
-                    = (delta_node_responses(left_child, Rcpp::_)
+                delta_node_responses.row(node)
+                    = (delta_node_responses.row(left_child)
                             * node_sizes[left_child]
-                            + delta_node_responses(right_child, Rcpp::_)
+                            + delta_node_responses.row(right_child)
                             * node_sizes[right_child])
                     / (node_sizes[left_child] + node_sizes[right_child]);
 
-                delta_node_responses(left_child, Rcpp::_)
-                    = delta_node_responses(left_child, Rcpp::_)
-                    - delta_node_responses(node, Rcpp::_);
+                delta_node_responses.row(left_child)
+                    = delta_node_responses.row(left_child)
+                    - delta_node_responses.row(node);
 
-                delta_node_responses(right_child, Rcpp::_)
-                    = delta_node_responses(right_child, Rcpp::_)
-                    - delta_node_responses(node, Rcpp::_);
+                delta_node_responses.row(right_child)
+                    = delta_node_responses.row(right_child)
+                    - delta_node_responses.row(node);
             }
         }
 
