@@ -2,8 +2,7 @@
 
 S3method(deltaNodeResponse,randomForest)
 S3method(deltaNodeResponse,ranger)
+export(decomposedPrediction)
 export(deltaNodeResponse)
-export(featureContribution)
-export(trainsetBias)
 importFrom(Rcpp,sourceCpp)
 useDynLib(tree.interpreter)
