@@ -8,13 +8,13 @@ test_that('decomposedPrediction works for classification tree', {
   decomposed.prediction <-
       decomposedPrediction(delta.node.resp, iris[-trainID, -5])
   expect_equal(length(decomposed.prediction), 30)
-  expect_equal(rownames(decomposed.prediction[[1]]),
-               levels(iris$Species))
   expect_equal(colnames(decomposed.prediction[[1]]),
+               levels(iris$Species))
+  expect_equal(rownames(decomposed.prediction[[1]]),
                rf$forest$independent.variable.names)
   bias <- attr(decomposed.prediction, 'bias')
-  expect_equal(rownames(bias), levels(iris$Species))
-  expect_equal(colnames(bias), 'Bias')
+  expect_equal(colnames(bias), levels(iris$Species))
+  expect_equal(rownames(bias), 'Bias')
 })
 
 library(MASS)
@@ -28,15 +28,15 @@ test_that('decomposedPrediction works for regression tree', {
   decomposed.prediction <-
       decomposedPrediction(delta.node.resp, Boston[-trainID, -14])
   expect_equal(length(decomposed.prediction), 106)
-  expect_equal(rownames(decomposed.prediction[[1]]),
-               'Response')
   expect_equal(colnames(decomposed.prediction[[1]]),
+               'Response')
+  expect_equal(rownames(decomposed.prediction[[1]]),
                rf$forest$independent.variable.names)
   bias <- attr(decomposed.prediction, 'bias')
-  expect_equal(rownames(bias), 'Response')
-  expect_equal(colnames(bias), 'Bias')
+  expect_equal(colnames(bias), 'Response')
+  expect_equal(rownames(bias), 'Bias')
   expect_equal(sapply(1:106, function(x)
-                      rowSums(decomposed.prediction[[x]]) + bias),
+                      colSums(decomposed.prediction[[x]]) + bias),
                predict(rf, Boston[-trainID, -14])$predictions)
 })
 

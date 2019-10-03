@@ -71,13 +71,13 @@ Rcpp::List deltaNodeResponseCpp_ranger(
         const int num_nodes = split_values.size();
         Rcpp::IntegerVector node_sizes(num_nodes);
 
-        Rcpp::NumericMatrix delta_node_responses(n_classes, num_nodes);
+        Rcpp::NumericMatrix delta_node_responses(num_nodes, n_classes);
 
-        Rcpp::rownames(delta_node_responses) = (n_classes == 1)
+        const Rcpp::IntegerVector rownames = Rcpp::seq_len(num_nodes) - 1;
+        Rcpp::rownames(delta_node_responses) = rownames;
+        Rcpp::colnames(delta_node_responses) = (n_classes == 1)
             ? Rcpp::CharacterVector("Response")
             : factor_responses.attr("levels");
-        const Rcpp::IntegerVector colnames = Rcpp::seq_len(num_nodes) - 1;
-        Rcpp::colnames(delta_node_responses) = colnames;
 
         for (int x = 0; x < inbag_counts.size(); x++) {
             const int inbag_count = inbag_counts[x];
@@ -99,13 +99,15 @@ Rcpp::List deltaNodeResponseCpp_ranger(
                     node_sizes[node_id] += inbag_count;
                 }
 
+                Rcpp::NumericVector delta_node_response
+                    = delta_node_responses(node_id, Rcpp::_);
                 if (n_classes == 1) {
                     // Regression
-                    delta_node_responses(0, node_id)
+                    delta_node_responses(node_id, 0)
                         += numeric_responses[x] * inbag_count;
                 } else {
                     // Classification
-                    delta_node_responses(factor_responses[x] - 1, node_id)
+                    delta_node_responses(node_id, factor_responses[x] - 1)
                         += inbag_count;
                 }
             }
@@ -115,23 +117,23 @@ Rcpp::List deltaNodeResponseCpp_ranger(
             const int left_child = left_children[node];
             const int right_child = right_children[node];
             if (!left_child && !right_child) {
-                delta_node_responses(Rcpp::_, node) =
-                    delta_node_responses(Rcpp::_, node) / node_sizes[node];
+                delta_node_responses(node, Rcpp::_) =
+                    delta_node_responses(node, Rcpp::_) / node_sizes[node];
             } else {
-                delta_node_responses(Rcpp::_, node)
-                    = (delta_node_responses(Rcpp::_, left_child)
+                delta_node_responses(node, Rcpp::_)
+                    = (delta_node_responses(left_child, Rcpp::_)
                             * node_sizes[left_child]
-                            + delta_node_responses(Rcpp::_, right_child)
+                            + delta_node_responses(right_child, Rcpp::_)
                             * node_sizes[right_child])
                     / (node_sizes[left_child] + node_sizes[right_child]);
 
-                delta_node_responses(Rcpp::_, left_child)
-                    = delta_node_responses(Rcpp::_, left_child)
-                    - delta_node_responses(Rcpp::_, node);
+                delta_node_responses(left_child, Rcpp::_)
+                    = delta_node_responses(left_child, Rcpp::_)
+                    - delta_node_responses(node, Rcpp::_);
 
-                delta_node_responses(Rcpp::_, right_child)
-                    = delta_node_responses(Rcpp::_, right_child)
-                    - delta_node_responses(Rcpp::_, node);
+                delta_node_responses(right_child, Rcpp::_)
+                    = delta_node_responses(right_child, Rcpp::_)
+                    - delta_node_responses(node, Rcpp::_);
             }
         }
 
