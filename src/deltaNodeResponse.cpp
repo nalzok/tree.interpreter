@@ -142,9 +142,9 @@ Rcpp::List deltaNodeResponseCpp_ranger(
     return Rcpp::List::create(
             Rcpp::Named("n.classes") = n_classes,
             Rcpp::Named("num.trees") = num_trees,
-            Rcpp::Named("variable.names") = independent_variable_names,
             Rcpp::Named("left.children") = left_children_ensemble,
             Rcpp::Named("right.children") = right_children_ensemble,
+            Rcpp::Named("variable.names") = independent_variable_names,
             Rcpp::Named("split.variables") = split_variables_ensemble,
             Rcpp::Named("split.values") = split_values_ensemble,
             Rcpp::Named("delta.node.resp") = delta_node_responses_ensemble
