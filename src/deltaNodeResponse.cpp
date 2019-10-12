@@ -42,17 +42,15 @@ Rcpp::List deltaNodeResponseCpp_ranger(
     const Rcpp::CharacterVector independent_variable_names =
         forest["independent.variable.names"];
     const Rcpp::CharacterVector original_variable_names = trainX.names();
+    Rcpp::IntegerVector reorder
+        = Rcpp::match(independent_variable_names, original_variable_names) - 1;
+    reorder.push_front(NA_INTEGER);
+
     Rcpp::List split_variables_ensemble(num_trees);
     for (int tree = 0; tree < num_trees; tree++) {
-        const Rcpp::IntegerVector split_var_IDs = split_var_IDs_ensemble[tree];
-        Rcpp::CharacterVector variable_names(split_var_IDs.size());
-        for (int i = 0; i < variable_names.size(); i++) {
-            int split_var_ID = split_var_IDs[i];
-            variable_names[i] = split_var_ID
-                ? independent_variable_names[split_var_ID - 1] : "";
-        }
-        split_variables_ensemble[tree]
-            = Rcpp::match(variable_names, original_variable_names) - 1;
+        Rcpp::IntegerVector split_var_IDs = split_var_IDs_ensemble[tree];
+        split_var_IDs[Rcpp::is_na(split_var_IDs)] = 0;
+        split_variables_ensemble[tree] = reorder[split_var_IDs];
     }
     const Rcpp::List split_values_ensemble = forest["split.values"];
 
@@ -144,7 +142,7 @@ Rcpp::List deltaNodeResponseCpp_ranger(
             Rcpp::Named("num.trees") = num_trees,
             Rcpp::Named("left.children") = left_children_ensemble,
             Rcpp::Named("right.children") = right_children_ensemble,
-            Rcpp::Named("variable.names") = independent_variable_names,
+            Rcpp::Named("variable.names") = original_variable_names,
             Rcpp::Named("split.variables") = split_variables_ensemble,
             Rcpp::Named("split.values") = split_values_ensemble,
             Rcpp::Named("delta.node.resp") = delta_node_responses_ensemble
