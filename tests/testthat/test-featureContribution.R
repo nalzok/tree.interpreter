@@ -1,6 +1,12 @@
 library(ranger)
+library(randomForest)
+library(MASS)
 
-test_that('featureContribution works for classification tree', {
+##########################################
+# TODO: add tests for keep.inbag = FALSE #
+##########################################
+
+test_that('featureContribution works for ranger & classification tree', {
   set.seed(42L)
   trainID <- sample(150, 120)
   rf <- ranger(Species ~ ., iris[trainID, ], keep.inbag = TRUE)
@@ -10,25 +16,27 @@ test_that('featureContribution works for classification tree', {
       featureContribution(delta.node.resp, iris[-trainID, -5])
   expect_equal(length(feature.contribution), 30)
   expect_equal(rownames(feature.contribution[[1]]),
-               rf$forest$independent.variable.names)
+               names(iris[trainID, -5]))
   expect_equal(colnames(feature.contribution[[1]]),
                levels(iris$Species))
 })
 
-test_that('trainsetBias works for classification tree', {
+test_that('featureContribution works for randomForest & classification tree', {
   set.seed(42L)
   trainID <- sample(150, 120)
-  rf <- ranger(Species ~ ., iris[trainID, ], keep.inbag = TRUE)
+  rf <- randomForest(Species ~ ., iris[trainID, ], keep.inbag = TRUE)
   delta.node.resp <- deltaNodeResponse(rf, iris[trainID, -5], iris[trainID, 5])
 
-  trainset.bias <- trainsetBias(delta.node.resp)
-  expect_equal(rownames(trainset.bias), 'Bias')
-  expect_equal(colnames(trainset.bias), levels(iris$Species))
+  feature.contribution <-
+      featureContribution(delta.node.resp, iris[-trainID, -5])
+  expect_equal(length(feature.contribution), 30)
+  expect_equal(rownames(feature.contribution[[1]]),
+               names(iris[trainID, -5]))
+  expect_equal(colnames(feature.contribution[[1]]),
+               levels(iris$Species))
 })
 
-library(MASS)
-
-test_that('featureContribution works for regression tree', {
+test_that('featureContribution works for ranger & regression tree', {
   set.seed(42L)
   trainID <- sample(506, 400)
   rf <- ranger(medv ~ ., Boston[trainID, ], keep.inbag = TRUE)
@@ -39,7 +47,7 @@ test_that('featureContribution works for regression tree', {
       featureContribution(delta.node.resp, Boston[-trainID, -14])
   expect_equal(length(feature.contribution), 106)
   expect_equal(rownames(feature.contribution[[1]]),
-               rf$forest$independent.variable.names)
+               names(Boston[trainID, -14]))
   expect_equal(colnames(feature.contribution[[1]]),
                'Response')
 
@@ -49,7 +57,50 @@ test_that('featureContribution works for regression tree', {
                predict(rf, Boston[-trainID, -14])$predictions)
 })
 
-test_that('trainsetBias works for regression tree', {
+test_that('featureContribution works for randomForest & regression tree', {
+  set.seed(42L)
+  trainID <- sample(506, 400)
+  rf <- randomForest(medv ~ ., Boston[trainID, ], keep.inbag = TRUE)
+  delta.node.resp <-
+      deltaNodeResponse(rf, Boston[trainID, -14], Boston[trainID, 14])
+
+  feature.contribution <-
+      featureContribution(delta.node.resp, Boston[-trainID, -14])
+  expect_equal(length(feature.contribution), 106)
+  expect_equal(rownames(feature.contribution[[1]]),
+               names(Boston[trainID, -14]))
+  expect_equal(colnames(feature.contribution[[1]]),
+               'Response')
+
+  trainset.bias <- trainsetBias(delta.node.resp)
+  expect_equal(sapply(1:106, function(x)
+                      colSums(feature.contribution[[x]]) + trainset.bias),
+               unname(predict(rf, Boston[-trainID, -14])))
+})
+
+test_that('trainsetBias works for ranger & classification tree', {
+  set.seed(42L)
+  trainID <- sample(150, 120)
+  rf <- ranger(Species ~ ., iris[trainID, ], keep.inbag = TRUE)
+  delta.node.resp <- deltaNodeResponse(rf, iris[trainID, -5], iris[trainID, 5])
+
+  trainset.bias <- trainsetBias(delta.node.resp)
+  expect_equal(rownames(trainset.bias), 'Bias')
+  expect_equal(colnames(trainset.bias), levels(iris$Species))
+})
+
+test_that('trainsetBias works for randomForest & classification tree', {
+  set.seed(42L)
+  trainID <- sample(150, 120)
+  rf <- randomForest(Species ~ ., iris[trainID, ], keep.inbag = TRUE)
+  delta.node.resp <- deltaNodeResponse(rf, iris[trainID, -5], iris[trainID, 5])
+
+  trainset.bias <- trainsetBias(delta.node.resp)
+  expect_equal(rownames(trainset.bias), 'Bias')
+  expect_equal(colnames(trainset.bias), levels(iris$Species))
+})
+
+test_that('trainsetBias works for ranger & regression tree', {
   set.seed(42L)
   trainID <- sample(506, 400)
   rf <- ranger(medv ~ ., Boston[trainID, ], keep.inbag = TRUE)
@@ -61,10 +112,33 @@ test_that('trainsetBias works for regression tree', {
   expect_equal(colnames(trainset.bias), 'Response')
 })
 
-test_that('featureContribution retains order of regressors', {
+test_that('trainsetBias works for randomForest & regression tree', {
+  set.seed(42L)
+  trainID <- sample(506, 400)
+  rf <- randomForest(medv ~ ., Boston[trainID, ], keep.inbag = TRUE)
+  delta.node.resp <-
+      deltaNodeResponse(rf, Boston[trainID, -14], Boston[trainID, 14])
+
+  trainset.bias <- trainsetBias(delta.node.resp)
+  expect_equal(rownames(trainset.bias), 'Bias')
+  expect_equal(colnames(trainset.bias), 'Response')
+})
+
+test_that('featureContribution retains order of regressors for ranger', {
   set.seed(42L)
   dummy <- data.frame(var1=1:100, var2=rnorm(100), var3=42L, var4=-(1:100))
   rf <- ranger(var4 ~ var2 + var1, dummy, keep.inbag = TRUE)
+  delta.node.resp <- deltaNodeResponse(rf, dummy[, -(3:4)], dummy[, 4])
+
+  feature.contribution <-
+      featureContribution(delta.node.resp, dummy[, -(3:4)])
+  expect_equal(rownames(feature.contribution[[1]]), c('var1', 'var2'))
+})
+
+test_that('featureContribution retains order of regressors for randomForest', {
+  set.seed(42L)
+  dummy <- data.frame(var1=1:100, var2=rnorm(100), var3=42L, var4=-(1:100))
+  rf <- randomForest(var4 ~ var2 + var1, dummy, keep.inbag = TRUE)
   delta.node.resp <- deltaNodeResponse(rf, dummy[, -(3:4)], dummy[, 4])
 
   feature.contribution <-

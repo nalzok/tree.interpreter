@@ -6,16 +6,16 @@
 using namespace Rcpp;
 
 // deltaNodeResponseCpp_randomForest
-Rcpp::List deltaNodeResponseCpp_randomForest(const Rcpp::List& rf, const Rcpp::DataFrame& trainX, const Rcpp::DataFrame& trainY, const Rcpp::List& inbag_counts);
-RcppExport SEXP _tree_interpreter_deltaNodeResponseCpp_randomForest(SEXP rfSEXP, SEXP trainXSEXP, SEXP trainYSEXP, SEXP inbag_countsSEXP) {
+Rcpp::List deltaNodeResponseCpp_randomForest(const Rcpp::List& rf, const Rcpp::DataFrame& trainX, const Rcpp::DataFrame& trainY, const Rcpp::List& inbag_counts_ensemble);
+RcppExport SEXP _tree_interpreter_deltaNodeResponseCpp_randomForest(SEXP rfSEXP, SEXP trainXSEXP, SEXP trainYSEXP, SEXP inbag_counts_ensembleSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< const Rcpp::List& >::type rf(rfSEXP);
     Rcpp::traits::input_parameter< const Rcpp::DataFrame& >::type trainX(trainXSEXP);
     Rcpp::traits::input_parameter< const Rcpp::DataFrame& >::type trainY(trainYSEXP);
-    Rcpp::traits::input_parameter< const Rcpp::List& >::type inbag_counts(inbag_countsSEXP);
-    rcpp_result_gen = Rcpp::wrap(deltaNodeResponseCpp_randomForest(rf, trainX, trainY, inbag_counts));
+    Rcpp::traits::input_parameter< const Rcpp::List& >::type inbag_counts_ensemble(inbag_counts_ensembleSEXP);
+    rcpp_result_gen = Rcpp::wrap(deltaNodeResponseCpp_randomForest(rf, trainX, trainY, inbag_counts_ensemble));
     return rcpp_result_gen;
 END_RCPP
 }
