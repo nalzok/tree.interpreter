@@ -1,5 +1,4 @@
 #include <cstring>
-#include <stack>
 #include <Rcpp.h>
 
 Rcpp::List calculate_delta_node_responses_ensemble(
@@ -88,6 +87,12 @@ Rcpp::List deltaNodeResponseCpp_randomForest(
     Rcpp::List split_variables_ensemble(num_trees);
     Rcpp::List split_values_ensemble(num_trees);
     Rcpp::IntegerMatrix split_variables_ensemble_matrix = forest["bestvar"];
+    const Rcpp::CharacterVector independent_variable_names
+        = Rcpp::rownames(rf["importance"]);
+    const Rcpp::CharacterVector original_variable_names = trainX.names();
+    Rcpp::IntegerVector reorder
+        = Rcpp::match(independent_variable_names, original_variable_names) - 1;
+    reorder.push_front(NA_INTEGER);
     Rcpp::NumericMatrix split_values_ensemble_matrix = forest["xbestsplit"];
     for (int tree = 0; tree < num_trees; tree++) {
         const Rcpp::Range row_range = Rcpp::Range(0, num_nodes[tree] - 1);
@@ -95,10 +100,8 @@ Rcpp::List deltaNodeResponseCpp_randomForest(
 
         const Rcpp::IntegerMatrix split_variables_matrix
             = split_variables_ensemble_matrix(row_range, column_range);
-        Rcpp::IntegerVector split_variables
-            = Rcpp::as<Rcpp::IntegerVector>(split_variables_matrix) - 1;
-        split_variables[split_variables < 0] = 0;
-        split_variables_ensemble[tree] = split_variables;
+        split_variables_ensemble[tree] = reorder[
+            Rcpp::as<Rcpp::IntegerVector>(split_variables_matrix)];
 
         split_values_ensemble[tree]
             = split_values_ensemble_matrix(row_range, column_range);
@@ -170,7 +173,6 @@ Rcpp::List deltaNodeResponseCpp_ranger(
     Rcpp::List split_variables_ensemble(num_trees);
     for (int tree = 0; tree < num_trees; tree++) {
         Rcpp::IntegerVector split_var_IDs = split_var_IDs_ensemble[tree];
-        split_var_IDs[Rcpp::is_na(split_var_IDs)] = 0;
         split_variables_ensemble[tree] = reorder[split_var_IDs];
     }
     const Rcpp::List split_values_ensemble = forest["split.values"];
@@ -272,28 +274,26 @@ Rcpp::List calculate_delta_node_responses_ensemble(
         for (int node = num_nodes - 1; node >= 0; node--) {
             const int left_child = left_children[node];
             const int right_child = right_children[node];
-            if (!left_child && !right_child) {
-                if (node_sizes[node] > 0) {
-                    delta_node_responses.row(node) =
-                        delta_node_responses.row(node) / node_sizes[node];
-                }
+            if (!node_sizes[node]) {
+                continue;
+            } else if (!left_child && !right_child) {
+                delta_node_responses.row(node) =
+                    delta_node_responses.row(node) / node_sizes[node];
             } else {
-                if (node_sizes[left_child] + node_sizes[right_child] > 0) {
-                    delta_node_responses.row(node)
-                        = (delta_node_responses.row(left_child)
-                                * node_sizes[left_child]
-                                + delta_node_responses.row(right_child)
-                                * node_sizes[right_child])
-                        / (node_sizes[left_child] + node_sizes[right_child]);
+                delta_node_responses.row(node)
+                    = (delta_node_responses.row(left_child)
+                            * node_sizes[left_child]
+                            + delta_node_responses.row(right_child)
+                            * node_sizes[right_child])
+                    / (node_sizes[left_child] + node_sizes[right_child]);
 
-                    delta_node_responses.row(left_child)
-                        = delta_node_responses.row(left_child)
-                        - delta_node_responses.row(node);
+                delta_node_responses.row(left_child)
+                    = delta_node_responses.row(left_child)
+                    - delta_node_responses.row(node);
 
-                    delta_node_responses.row(right_child)
-                        = delta_node_responses.row(right_child)
-                        - delta_node_responses.row(node);
-                }
+                delta_node_responses.row(right_child)
+                    = delta_node_responses.row(right_child)
+                    - delta_node_responses.row(node);
             }
         }
 
