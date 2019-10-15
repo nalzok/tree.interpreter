@@ -6,12 +6,16 @@ Date: 2019-08-21
 Author: Qingyao Sun
 Maintainer: Qingyao Sun <nalzok@lbl.gov>
 Description: An R implementation of the treeinterpreter package on PyPI. Each
-        prediction is decomposed as prediction = bias + feature_1_contribution
-        + ... + feature_n_contribution.
+        prediction is decomposed as (bias + feature_1_contribution + ... +
+        feature_n_contribution). This decomposition can then be used as a
+        measure of feature importance.
 Encoding: UTF-8
 License: MIT + file LICENSE
 Imports: Rcpp (>= 1.0.2)
 LinkingTo: Rcpp
 RoxygenNote: 6.1.1
 Suggests:
+    MASS,
+    randomForest,
+    ranger,
     testthat (>= 2.1.0)
