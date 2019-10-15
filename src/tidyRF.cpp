@@ -20,6 +20,10 @@ Rcpp::List tidyRFCpp_randomForest(
         const Rcpp::DataFrame& trainY,
         const Rcpp::List& inbag_counts_ensemble) {
 
+    const int num_trees = rfobj["ntree"];
+    const Rcpp::List forest = rfobj["forest"];
+    const Rcpp::IntegerVector num_nodes = forest["ndbigtree"];
+
     // We'll use one and only one of these
     const Rcpp::NumericVector numeric_responses = trainY[0];
     const Rcpp::IntegerVector factor_responses = trainY[0];
@@ -27,10 +31,6 @@ Rcpp::List tidyRFCpp_randomForest(
     const int n_classes = strcmp(rfobj["type"], "classification")
         ? 1 : Rcpp::as<Rcpp::CharacterVector>(
                 factor_responses.attr("levels")).size();
-
-    const int num_trees = rfobj["ntree"];
-    const Rcpp::List forest = rfobj["forest"];
-    const Rcpp::IntegerVector num_nodes = forest["ndbigtree"];
 
     Rcpp::List left_children_ensemble(num_trees);
     Rcpp::List right_children_ensemble(num_trees);
@@ -145,16 +145,27 @@ Rcpp::List tidyRFCpp_ranger(
         const Rcpp::DataFrame& trainY,
         const Rcpp::List& inbag_counts_ensemble) {
 
+    const int num_trees = rfobj["num.trees"];
+    const Rcpp::List forest = rfobj["forest"];
+
     // We'll use one and only one of these
-    const Rcpp::NumericVector numeric_responses = trainY[0];
-    const Rcpp::IntegerVector factor_responses = trainY[0];
+    Rcpp::NumericVector numeric_responses = trainY[0];
+    Rcpp::IntegerVector factor_responses = trainY[0];
+
+    // I don't even know when `class.values` is NOT `1:nlevels(Y)`. It's added
+    // simply because this conversion is carried out by `ranger::ranger` when
+    // calculating the predictions of the random forest.
+    if (forest.containsElementNamed("class.values")) {
+        const Rcpp::IntegerVector class_values = forest["class.values"];
+        // Preserve attributes of factor_responses via pointer aliasing
+        Rcpp::IntegerVector alias_factor_responses = factor_responses;
+        alias_factor_responses
+            = Rcpp::match(alias_factor_responses, class_values);
+    }
 
     const int n_classes = strcmp(rfobj["treetype"], "Classification")
         ? 1 : Rcpp::as<Rcpp::CharacterVector>(
                 factor_responses.attr("levels")).size();
-
-    const int num_trees = rfobj["num.trees"];
-    const Rcpp::List forest = rfobj["forest"];
 
     const Rcpp::List children_ensemble = forest["child.nodeIDs"];
     Rcpp::List left_children_ensemble(num_trees);

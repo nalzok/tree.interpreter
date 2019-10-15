@@ -1,10 +1,10 @@
 Package: tree.interpreter
 Type: Package
-Title: Decompose Random Forest Prediction into Bias and Feature Contribution
-Version: 1.0
-Date: 2019-08-21
+Title: Decompose Random Forest Prediction into Trainset Bias and Feature Contribution
+Version: 0.1.0
+Date: 2019-10-15
 Author: Qingyao Sun
-Maintainer: Qingyao Sun <nalzok@lbl.gov>
+Maintainer: Qingyao Sun <sunqingyao19970825@gmail.com>
 Description: An R implementation of the treeinterpreter package on PyPI. Each
         prediction is decomposed as (bias + feature_1_contribution + ... +
         feature_n_contribution). This decomposition can then be used as a
@@ -19,3 +19,5 @@ Suggests:
     randomForest,
     ranger,
     testthat (>= 2.1.0)
+URL: https://github.com/nalzok/tree.interpreter
+BugReports: https://github.com/nalzok/tree.interpreter/issues

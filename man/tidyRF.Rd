@@ -28,8 +28,8 @@ A list of class \code{tidyRF}, with entries:
       right children of its nodes.}
     \item{\code{split.features}}{A list. For each tree, a vector of the
       indices of features used at its nodes. Indices start from 0. A value
-      of zero means the node is a terminal node. This does not cause
-      ambiguity, as the root node will never be a child of other nodes.}
+      of 0 means the node is terminal. This does not cause ambiguity,
+      because the root node will never be a child of other nodes.}
     \item{\code{split.values}}{A list. For each tree, a vector of the
       values of features used at its nodes.}
     \item{\code{node.sizes}}{A list. For each tree, a vector of the sizes

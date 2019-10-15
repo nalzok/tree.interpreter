@@ -15,10 +15,10 @@ with.}
 \value{
 A list. The structure and content depends the type of the forest.
   \itemize{
-    \item Regression For each observation, a P-by-1 matrix, where P is the
+    \item Regression: For each observation, a P-by-1 matrix, where P is the
       number of features in \code{testX}. Each row of the matrix stands for
       the contribution of that feature to the prediction of the response.
-    \item Classification For each observation, a P-by-K matrix, where P is
+    \item Classification: For each observation, a P-by-K matrix, where P is
       the number of features in \code{testX}, and K is the number of
       response classes. Each row of the matrix stands for the contribution
       of that feature to the prediction of each response class.

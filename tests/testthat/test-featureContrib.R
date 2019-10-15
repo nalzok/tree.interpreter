@@ -2,10 +2,6 @@ library(ranger)
 library(randomForest)
 library(MASS)
 
-##########################################
-# TODO: add tests for keep.inbag = FALSE #
-##########################################
-
 test_that('featureContrib works for ranger & classification tree', {
   set.seed(42L)
   trainID <- sample(150, 120)

@@ -52,7 +52,7 @@ tidyRF.randomForest <- function(rfobj, trainX, trainY) {
                                   each = nrow(rfobj$inbag)))
     } else {
         warning('keep.inbag = FALSE, using all observations')
-        inbag.counts <- replicate(rfobj$num.trees, rep(1, nrow(trainX)),
+        inbag.counts <- replicate(rfobj$ntree, rep(1, nrow(trainX)),
                                   simplify=FALSE)
     }
 
