@@ -37,8 +37,8 @@
 #'       in \code{X}, and N the number of samples in \code{X}. The pth row of
 #'       the nth slice stands for the contribution of feature p to the
 #'       prediction for response n.
-#'     \item Classification: A P-by-K-by-N array, where P is the number of
-#'       features in \code{X}, K is the number of response classes, and N is
+#'     \item Classification: A P-by-D-by-N array, where P is the number of
+#'       features in \code{X}, D is the number of response classes, and N is
 #'       the number of samples in \code{X}. The pth row of the nth slice stands
 #'       for the contribution of feature p to the prediction of each response
 #'       class for response n.
@@ -102,7 +102,7 @@ featureContrib <- function(tidy.RF, X) {
 #'   \itemize{
 #'     \item Regression: A 1-by-1 matrix. The trainset bias for the prediction
 #'       of the response.
-#'     \item Classification: A 1-by-K matrix, where K is the number of response
+#'     \item Classification: A 1-by-D matrix, where D is the number of response
 #'       classes. Each column of the matrix stands for the trainset bias for
 #'       the prediction of each response class.
 #'   }

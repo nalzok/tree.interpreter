@@ -39,11 +39,11 @@ $$
 f_{k}(X) = \frac{1}{n_{\text{tree}}} \sum_{s=1}^{n_{\text{tree}}} f_{T_s, k}(X),
 $$
 
-where the forest is represented by an ensemble of $n_{\text{tree}}$ trees $T_1, \dots, T_{n_{\text{tree}}}$. This is sensible because (at least for regression trees) a forest makes prediction by averaging over the predictions of its trees, so all trees naturally have the same weight. It follows that the prediction of $X$ by the whole forest is exactly the sum of the average response of the root nodes in the forest and $\sum_{k} f_{k}(X)$. This is calculated by the function `tree.interpreter::featureContrib`
+where the forest is represented by an ensemble of $n_{\text{tree}}$ trees $T_1, \dots, T_{n_{\text{tree}}}$. This is sensible because (at least for regression trees) a forest makes prediction by averaging over the predictions of its trees, so all trees naturally have the same weight. It follows that the prediction of $X$ by the whole forest is exactly the sum of the average response of the root nodes in the forest and $\sum_{k} f_{k}(X)$. This is calculated by the function `tree.interpreter::featureContrib`.
 
 Later, [@saabas_random_2015] released a Python library named **treeinterpreter** on PyPI, implementing this interpretation algorithm for random forest models by the RF library **scikit-learn**. This R package effectively serves as its R counterpart.
 
-## MDI and MDI-oob in $f_{T, k}(X)$
+## MDI in $f_{T, k}(X)$
 
 Recently, [@li_debiased_2019] have shown that for a tree $T$, the MDI of the feature $k$ can be written as:
 
@@ -51,11 +51,75 @@ $$
 \frac{1}{|\mathcal{D}^{(T)}|} \sum_{i \in \mathcal{D}^{(T)}} f_{T, k}(x_i) \cdot y_i.
 $$
 
-They also propose a debiased MDI feature importance measure using out-of-bag samples, called MDI-oob
+The implementation is shown below
+
+```{r mdi}
+MDITree <- function(tidy.RF, tree, X, Y) {
+  inbag.counts <- tidy.RF$inbag.counts[[tree]]
+  inbag.indices <- as.logical(inbag.counts)
+  X.inbag <- X[inbag.indices, ]
+  Y.inbag <- t(Y[inbag.indices, ])
+  ftk.y <- featureContribTree(tidy.RF, tree, X.inbag) *
+    rep(Y.inbag, each=ncol(X.inbag)) *
+    rep(inbag.counts[inbag.indices],
+        each = tidy.RF$num.classes * ncol(X.inbag))
+  apply(ftk.y, 1:2, sum) / sum(inbag.counts)
+}
+
+MDI <- function(tidy.RF, X, Y) {
+  if (tidy.RF$num.classes > 1) {
+    # One-hot encode classification responses
+    onehot <- matrix(0, nrow=length(Y), ncol=tidy.RF$num.classes)
+    indice <- matrix(c(1:length(Y), Y[1:length(Y)]), ncol = 2)
+    onehot[indice] <- 1
+    Y <- onehot
+  } else {
+    Y <- matrix(Y)
+  }
+
+  Reduce(`+`, lapply(1:tidy.RF$num.trees,
+                     function(tree) MDITree(tidy.RF, tree, X, Y))) /
+    tidy.RF$num.trees
+}
+```
+
+## MDI-oob in $f_{T, k}(X)$
+
+They also proposed a debiased MDI feature importance measure using out-of-bag samples, called MDI-oob
 
 $$
 \frac{1}{|\mathcal{D} \setminus \mathcal{D}^{(T)}|} \sum_{i \in \mathcal{D} \setminus \mathcal{D}^{(T)}} f_{T, k}(x_i) \cdot y_i.
 $$
+
+The implementation is shown below
+
+```{r mdi.oob}
+MDIoobTree <- function(tidy.RF, tree, X, Y) {
+  inbag.counts <- tidy.RF$inbag.counts[[tree]]
+  indices.oob <- !as.logical(inbag.counts)
+  X.oob <- X[indices.oob, ]
+  Y.oob <- t(Y[indices.oob, ])
+  ftk.y <- featureContribTree(tidy.RF, tree, X.oob) *
+    rep(Y.oob, each=ncol(X.oob))
+  apply(ftk.y, 1:2, sum) / sum(indices.oob)
+}
+
+MDIoob <- function(tidy.RF, X, Y) {
+  if (tidy.RF$num.classes > 1) {
+    # One-hot encode classification responses
+    onehot <- matrix(0, nrow=length(Y), ncol=tidy.RF$num.classes)
+    indice <- matrix(c(1:length(Y), Y[1:length(Y)]), ncol = 2)
+    onehot[indice] <- 1
+    Y <- onehot
+  } else {
+    Y <- matrix(Y)
+  }
+
+  Reduce(`+`, lapply(1:tidy.RF$num.trees,
+                     function(tree) MDIoobTree(tidy.RF, tree, X, Y))) /
+    tidy.RF$num.trees
+}
+```
 
 ## Examples
 
@@ -80,28 +144,7 @@ tidy.RF <- tidyRF(rf, Boston[, -14], Boston[, 14])
 #### MDI
 
 ```{r mdi.reg}
-MDITree.reg <- function(tidy.RF, tree, X, Y) {
-  inbag.counts <- tidy.RF$inbag.counts[[tree]]
-  inbag.indices <- as.logical(inbag.counts)
-  X.inbag <- X[inbag.indices, ]
-  Y.inbag <- Y[inbag.indices]
-  ftk.y <- featureContribTree(tidy.RF, tree, X.inbag) *
-    rep(Y.inbag * inbag.counts[inbag.indices], each=ncol(X.inbag))
-  apply(ftk.y, 1:2, sum) / sum(inbag.counts)
-}
-
-MDI.reg <- function(tidy.RF, X, Y) {
-  Reduce(`+`, lapply(1:tidy.RF$num.trees,
-                     function(tree) MDITree.reg(tidy.RF, tree, X, Y))) /
-    tidy.RF$num.trees
-}
-
-(Boston.MDI <- MDI.reg(tidy.RF, Boston[, -14], Boston[, 14]))
-```
-
-You can verify the equivalence
-
-```{r equivalence.reg}
+t(Boston.MDI <- MDI(tidy.RF, Boston[, -14], Boston[, 14]))
 all.equal(as.vector(Boston.MDI),
           as.vector(importance(rf) / sum(rf$inbag.counts[[1]])))
 ```
@@ -109,23 +152,7 @@ all.equal(as.vector(Boston.MDI),
 #### MDI-oob
 
 ```{r mdi.oob.reg}
-MDIoobTree.reg <- function(tidy.RF, tree, X, Y) {
-  inbag.counts <- tidy.RF$inbag.counts[[tree]]
-  indices.oob <- !as.logical(inbag.counts)
-  X.oob <- X[indices.oob, ]
-  Y.oob <- Y[indices.oob]
-  ftk.y <- featureContribTree(tidy.RF, tree, X.oob) *
-    rep(Y.oob, each=ncol(X.oob))
-  apply(ftk.y, 1:2, sum) / sum(indices.oob)
-}
-
-MDIoob.reg <- function(tidy.RF, X, Y) {
-  Reduce(`+`, lapply(1:tidy.RF$num.trees,
-                     function(tree) MDIoobTree.reg(tidy.RF, tree, X, Y))) /
-    tidy.RF$num.trees
-}
-
-MDIoob.reg(tidy.RF, Boston[, -14], Boston[, 14])
+t(MDIoob(tidy.RF, Boston[, -14], Boston[, 14]))
 ```
 
 ### Classification
@@ -143,35 +170,7 @@ tidy.RF <- tidyRF(rf, iris[, -5], iris[, 5])
 In this case, we need to employ one hot encoding.
 
 ```{r mdi.class}
-MDITree.class <- function(tidy.RF, tree, X, Y) {
-  inbag.counts <- tidy.RF$inbag.counts[[tree]]
-  inbag.indices <- as.logical(inbag.counts)
-  X.inbag <- X[inbag.indices, ]
-  Y.inbag <- t(Y[inbag.indices, ])
-  ftk.y <- featureContribTree(tidy.RF, tree, X.inbag) *
-    rep(Y.inbag, each = ncol(X.inbag)) *
-    rep(inbag.counts[inbag.indices], each = tidy.RF$num.classes * ncol(X.inbag))
-  apply(ftk.y, 1:2, sum) / sum(inbag.counts)
-}
-
-MDI.class <- function(tidy.RF, X, Y) {
-  # Convert response to one hot vectors
-  onehot <- matrix(0, nrow=length(Y), ncol=tidy.RF$num.classes)
-  indice <- matrix(c(1:length(Y), Y[1:length(Y)]), ncol = 2)
-  onehot[indice] <- 1
-  Y <- onehot
-
-  Reduce(`+`, lapply(1:tidy.RF$num.trees,
-                     function(tree) MDITree.class(tidy.RF, tree, X, Y))) /
-    tidy.RF$num.trees
-}
-
-(iris.MDI <- rowSums(MDI.class(tidy.RF, iris[, -5], iris[, 5])))
-```
-
-You can verify the equivalence
-
-```{r equivalence.class}
+(iris.MDI <- rowSums(MDI(tidy.RF, iris[, -5], iris[, 5])))
 all.equal(as.vector(iris.MDI),
           as.vector(importance(rf) / sum(rf$inbag.counts[[1]])))
 ```
@@ -179,29 +178,7 @@ all.equal(as.vector(iris.MDI),
 #### MDI-oob
 
 ```{r mdi.oob.class}
-MDIoobTree.class <- function(tidy.RF, tree, X, Y) {
-  inbag.counts <- tidy.RF$inbag.counts[[tree]]
-  indices.oob <- !as.logical(inbag.counts)
-  X.oob <- X[indices.oob, ]
-  Y.oob <- t(Y[indices.oob, ])
-  ftk.y <- featureContribTree(tidy.RF, tree, X.oob) *
-    rep(Y.oob, each = ncol(X.oob))
-  apply(ftk.y, 1:2, sum) / sum(indices.oob)
-}
-
-MDIoob.class <- function(tidy.RF, X, Y) {
-  # Convert response to one hot vectors
-  onehot <- matrix(0, nrow=length(Y), ncol=tidy.RF$num.classes)
-  indice <- matrix(c(1:length(Y), Y[1:length(Y)]), ncol = 2)
-  onehot[indice] <- 1
-  Y <- onehot
-
-  Reduce(`+`, lapply(1:tidy.RF$num.trees,
-                     function(tree) MDIoobTree.class(tidy.RF, tree, X, Y))) /
-    tidy.RF$num.trees
-}
-
-rowSums(MDIoob.class(tidy.RF, iris[, -5], iris[, 5]))
+rowSums(MDIoob(tidy.RF, iris[, -5], iris[, 5]))
 ```
 
 ## References

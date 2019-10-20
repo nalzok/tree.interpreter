@@ -24,8 +24,8 @@ A cube (3D array). The content depends on the type of the response.
       in \code{X}, and N the number of samples in \code{X}. The pth row of
       the nth slice stands for the contribution of feature p to the
       prediction for response n.
-    \item Classification: A P-by-K-by-N array, where P is the number of
-      features in \code{X}, K is the number of response classes, and N is
+    \item Classification: A P-by-D-by-N array, where P is the number of
+      features in \code{X}, D is the number of response classes, and N is
       the number of samples in \code{X}. The pth row of the nth slice stands
       for the contribution of feature p to the prediction of each response
       class for response n.

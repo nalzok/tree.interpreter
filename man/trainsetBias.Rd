@@ -20,7 +20,7 @@ A matrix. The content depends the type of the response.
   \itemize{
     \item Regression: A 1-by-1 matrix. The trainset bias for the prediction
       of the response.
-    \item Classification: A 1-by-K matrix, where K is the number of response
+    \item Classification: A 1-by-D matrix, where D is the number of response
       classes. Each column of the matrix stands for the trainset bias for
       the prediction of each response class.
   }
