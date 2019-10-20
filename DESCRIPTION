@@ -12,12 +12,15 @@ Description: An R implementation of the treeinterpreter package on PyPI. Each
 Encoding: UTF-8
 License: MIT + file LICENSE
 Imports: Rcpp (>= 1.0.2)
-LinkingTo: Rcpp
+LinkingTo: Rcpp, RcppArmadillo
 RoxygenNote: 6.1.1
 Suggests:
     MASS,
     randomForest,
     ranger,
-    testthat (>= 2.1.0)
+    testthat (>= 2.1.0),
+    knitr,
+    rmarkdown
 URL: https://github.com/nalzok/tree.interpreter
 BugReports: https://github.com/nalzok/tree.interpreter/issues
+VignetteBuilder: knitr

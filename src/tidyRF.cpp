@@ -2,23 +2,23 @@
 #include <Rcpp.h>
 
 Rcpp::List calculate_auxiliary_information(
-        const Rcpp::DataFrame& trainX,
-        const Rcpp::NumericVector& numeric_responses,
-        const Rcpp::IntegerVector& factor_responses,
-        const Rcpp::List& inbag_counts_ensemble,
-        const int n_classes,
+        const Rcpp::DataFrame & trainX,
+        const Rcpp::NumericVector & numeric_responses,
+        const Rcpp::IntegerVector & factor_responses,
+        const Rcpp::List & inbag_counts_ensemble,
+        const int num_classes,
         const int num_trees,
-        const Rcpp::List& left_children_ensemble,
-        const Rcpp::List& right_children_ensemble,
-        const Rcpp::List& split_variables_ensemble,
-        const Rcpp::List& split_values_ensemble);
+        const Rcpp::List & left_children_ensemble,
+        const Rcpp::List & right_children_ensemble,
+        const Rcpp::List & split_variables_ensemble,
+        const Rcpp::List & split_values_ensemble);
 
 // [[Rcpp::export]]
 Rcpp::List tidyRFCpp_randomForest(
-        const Rcpp::List& rfobj,
-        const Rcpp::DataFrame& trainX,
-        const Rcpp::DataFrame& trainY,
-        const Rcpp::List& inbag_counts_ensemble) {
+        const Rcpp::List & rfobj,
+        const Rcpp::DataFrame & trainX,
+        const Rcpp::DataFrame & trainY,
+        const Rcpp::List & inbag_counts_ensemble) {
 
     const int num_trees = rfobj["ntree"];
     const Rcpp::List forest = rfobj["forest"];
@@ -28,13 +28,13 @@ Rcpp::List tidyRFCpp_randomForest(
     const Rcpp::NumericVector numeric_responses = trainY[0];
     const Rcpp::IntegerVector factor_responses = trainY[0];
 
-    const int n_classes = strcmp(rfobj["type"], "classification")
+    const int num_classes = strcmp(rfobj["type"], "classification")
         ? 1 : Rcpp::as<Rcpp::CharacterVector>(
                 factor_responses.attr("levels")).size();
 
     Rcpp::List left_children_ensemble(num_trees);
     Rcpp::List right_children_ensemble(num_trees);
-    if (n_classes == 1) {
+    if (num_classes == 1) {
         // Regression
         Rcpp::IntegerMatrix left_children_ensemble_matrix
             = forest["leftDaughter"];
@@ -87,11 +87,11 @@ Rcpp::List tidyRFCpp_randomForest(
     Rcpp::List split_variables_ensemble(num_trees);
     Rcpp::List split_values_ensemble(num_trees);
     Rcpp::IntegerMatrix split_variables_ensemble_matrix = forest["bestvar"];
-    const Rcpp::CharacterVector independent_variable_names
+    const Rcpp::CharacterVector rf_feature_names
         = Rcpp::rownames(rfobj["importance"]);
-    const Rcpp::CharacterVector original_variable_names = trainX.names();
+    const Rcpp::CharacterVector original_feature_names = trainX.names();
     Rcpp::IntegerVector reorder
-        = Rcpp::match(independent_variable_names, original_variable_names) - 1;
+        = Rcpp::match(rf_feature_names, original_feature_names) - 1;
     reorder.push_front(NA_INTEGER);
     Rcpp::NumericMatrix split_values_ensemble_matrix = forest["xbestsplit"];
     for (int tree = 0; tree < num_trees; tree++) {
@@ -107,7 +107,7 @@ Rcpp::List tidyRFCpp_randomForest(
             = split_values_ensemble_matrix(row_range, column_range);
     }
 
-    const Rcpp::CharacterVector variable_names = trainX.names();
+    const Rcpp::CharacterVector feature_names = trainX.names();
 
     const Rcpp::List auxiliary_information
         = calculate_auxiliary_information(
@@ -115,7 +115,7 @@ Rcpp::List tidyRFCpp_randomForest(
                 numeric_responses,
                 factor_responses,
                 inbag_counts_ensemble,
-                n_classes,
+                num_classes,
                 num_trees,
                 left_children_ensemble,
                 right_children_ensemble,
@@ -124,11 +124,12 @@ Rcpp::List tidyRFCpp_randomForest(
                 );
 
     return Rcpp::List::create(
-            Rcpp::Named("n.classes") = n_classes,
+            Rcpp::Named("num.classes") = num_classes,
             Rcpp::Named("num.trees") = num_trees,
+            Rcpp::Named("feature.names") = feature_names,
+            Rcpp::Named("inbag.counts") = inbag_counts_ensemble,
             Rcpp::Named("left.children") = left_children_ensemble,
             Rcpp::Named("right.children") = right_children_ensemble,
-            Rcpp::Named("variable.names") = variable_names,
             Rcpp::Named("split.variables") = split_variables_ensemble,
             Rcpp::Named("split.values") = split_values_ensemble,
             Rcpp::Named("node.sizes") = auxiliary_information[0],
@@ -140,10 +141,10 @@ Rcpp::List tidyRFCpp_randomForest(
 
 // [[Rcpp::export]]
 Rcpp::List tidyRFCpp_ranger(
-        const Rcpp::List& rfobj,
-        const Rcpp::DataFrame& trainX,
-        const Rcpp::DataFrame& trainY,
-        const Rcpp::List& inbag_counts_ensemble) {
+        const Rcpp::List & rfobj,
+        const Rcpp::DataFrame & trainX,
+        const Rcpp::DataFrame & trainY,
+        const Rcpp::List & inbag_counts_ensemble) {
 
     const int num_trees = rfobj["num.trees"];
     const Rcpp::List forest = rfobj["forest"];
@@ -163,7 +164,7 @@ Rcpp::List tidyRFCpp_ranger(
             = Rcpp::match(alias_factor_responses, class_values);
     }
 
-    const int n_classes = strcmp(rfobj["treetype"], "Classification")
+    const int num_classes = strcmp(rfobj["treetype"], "Classification")
         ? 1 : Rcpp::as<Rcpp::CharacterVector>(
                 factor_responses.attr("levels")).size();
 
@@ -177,11 +178,11 @@ Rcpp::List tidyRFCpp_ranger(
     }
 
     const Rcpp::List split_var_IDs_ensemble = forest["split.varIDs"];
-    const Rcpp::CharacterVector independent_variable_names =
+    const Rcpp::CharacterVector rf_feature_names =
         forest["independent.variable.names"];
-    const Rcpp::CharacterVector original_variable_names = trainX.names();
+    const Rcpp::CharacterVector original_feature_names = trainX.names();
     Rcpp::IntegerVector reorder
-        = Rcpp::match(independent_variable_names, original_variable_names) - 1;
+        = Rcpp::match(rf_feature_names, original_feature_names) - 1;
     reorder.push_front(NA_INTEGER);
 
     Rcpp::List split_variables_ensemble(num_trees);
@@ -197,7 +198,7 @@ Rcpp::List tidyRFCpp_ranger(
                 numeric_responses,
                 factor_responses,
                 inbag_counts_ensemble,
-                n_classes,
+                num_classes,
                 num_trees,
                 left_children_ensemble,
                 right_children_ensemble,
@@ -206,11 +207,12 @@ Rcpp::List tidyRFCpp_ranger(
                 );
 
     return Rcpp::List::create(
-            Rcpp::Named("n.classes") = n_classes,
+            Rcpp::Named("num.classes") = num_classes,
             Rcpp::Named("num.trees") = num_trees,
+            Rcpp::Named("feature.names") = original_feature_names,
+            Rcpp::Named("inbag.counts") = inbag_counts_ensemble,
             Rcpp::Named("left.children") = left_children_ensemble,
             Rcpp::Named("right.children") = right_children_ensemble,
-            Rcpp::Named("variable.names") = original_variable_names,
             Rcpp::Named("split.variables") = split_variables_ensemble,
             Rcpp::Named("split.values") = split_values_ensemble,
             Rcpp::Named("node.sizes") = auxiliary_information[0],
@@ -221,16 +223,16 @@ Rcpp::List tidyRFCpp_ranger(
 }
 
 Rcpp::List calculate_auxiliary_information(
-        const Rcpp::DataFrame& trainX,
-        const Rcpp::NumericVector& numeric_responses,
-        const Rcpp::IntegerVector& factor_responses,
-        const Rcpp::List& inbag_counts_ensemble,
-        const int n_classes,
+        const Rcpp::DataFrame & trainX,
+        const Rcpp::NumericVector & numeric_responses,
+        const Rcpp::IntegerVector & factor_responses,
+        const Rcpp::List & inbag_counts_ensemble,
+        const int num_classes,
         const int num_trees,
-        const Rcpp::List& left_children_ensemble,
-        const Rcpp::List& right_children_ensemble,
-        const Rcpp::List& split_variables_ensemble,
-        const Rcpp::List& split_values_ensemble) {
+        const Rcpp::List & left_children_ensemble,
+        const Rcpp::List & right_children_ensemble,
+        const Rcpp::List & split_variables_ensemble,
+        const Rcpp::List & split_values_ensemble) {
 
     Rcpp::List auxiliary_information(4);
 
@@ -239,7 +241,7 @@ Rcpp::List calculate_auxiliary_information(
     Rcpp::List delta_node_responses_left_ensemble(num_trees);
     Rcpp::List delta_node_responses_right_ensemble(num_trees);
 
-    const Rcpp::CharacterVector colnames = (n_classes == 1)
+    const Rcpp::CharacterVector colnames = (num_classes == 1)
         ? Rcpp::CharacterVector("Response")
         : factor_responses.attr("levels");
 
@@ -258,15 +260,15 @@ Rcpp::List calculate_auxiliary_information(
 
         Rcpp::IntegerVector node_sizes(num_nodes);
 
-        Rcpp::NumericMatrix node_responses(num_nodes, n_classes);
+        Rcpp::NumericMatrix node_responses(num_nodes, num_classes);
         Rcpp::rownames(node_responses) = rownames;
         Rcpp::colnames(node_responses) = colnames;
 
-        Rcpp::NumericMatrix delta_node_responses_left(num_nodes, n_classes);
+        Rcpp::NumericMatrix delta_node_responses_left(num_nodes, num_classes);
         Rcpp::rownames(delta_node_responses_left) = rownames;
         Rcpp::colnames(delta_node_responses_left) = colnames;
 
-        Rcpp::NumericMatrix delta_node_responses_right(num_nodes, n_classes);
+        Rcpp::NumericMatrix delta_node_responses_right(num_nodes, num_classes);
         Rcpp::rownames(delta_node_responses_right) = rownames;
         Rcpp::colnames(delta_node_responses_right) = colnames;
 
@@ -290,7 +292,7 @@ Rcpp::List calculate_auxiliary_information(
                     node_sizes[node_id] += inbag_count;
                 }
 
-                if (n_classes == 1) {
+                if (num_classes == 1) {
                     // Regression
                     node_responses(node_id, 0)
                         += numeric_responses[x] * inbag_count;

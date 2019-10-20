@@ -129,3 +129,5 @@ tags
 # End of https://www.gitignore.io/api/r,vim,c++,macos
 
 **/*.tmp
+inst/doc
+tree.interpreter.Rproj
