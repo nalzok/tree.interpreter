@@ -20,7 +20,8 @@ Suggests:
     ranger,
     testthat (>= 2.1.0),
     knitr,
-    rmarkdown
+    rmarkdown,
+    covr
 URL: https://github.com/nalzok/tree.interpreter
 BugReports: https://github.com/nalzok/tree.interpreter/issues
 VignetteBuilder: knitr

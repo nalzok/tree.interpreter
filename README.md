@@ -1,4 +1,8 @@
 # tree.interpreter
+<!-- badges: start -->
+[![Travis build status](https://travis-ci.org/nalzok/tree.interpreter.svg?branch=master)](https://travis-ci.org/nalzok/tree.interpreter)
+[![Codecov test coverage](https://codecov.io/gh/nalzok/tree.interpreter/branch/master/graph/badge.svg)](https://codecov.io/gh/nalzok/tree.interpreter?branch=master)
+<!-- badges: end -->
 
 An R implementation of the [treeinterpreter][treeinterpreter] package on PyPI.
 Each prediction is decomposed as (bias + feature\_1\_contribution + ... +
