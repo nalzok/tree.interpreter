@@ -1,6 +1,7 @@
 #!/bin/sh
 
-if echo 'int main() {}' | clang++ -fopenmp -xc++ - -o do-nothing; then
+echo 'int main() {}' | clang++ -fopenmp -xc++ - -o /dev/stdout > /dev/null 2>&1
+if [ "$?" -ne 0 ]; then
     sed 's/$(SHLIB_OPENMP_CXXFLAGS)//g' src/Makevars.template > src/Makevars
 else
     cp src/Makevars.template src/Makevars
