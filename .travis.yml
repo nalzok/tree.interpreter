@@ -6,6 +6,6 @@ os:
   - linux
 cache: packages
 before_install:
-  - tlmgr install inconsolata
+  - sudo tlmgr install inconsolata
 after_success:
   - Rscript -e 'covr::codecov()'
