@@ -10,6 +10,16 @@ Each prediction is decomposed as (bias + feature\_1\_contribution + ... +
 feature\_n\_contribution). This decomposition is then used to calculate the
 MDI and MDI-oob feature importance measures for both trees and forests.
 
+## Installation
+
+Before I publish it on CRAN, you can conveniently install it with
+
+```r
+devtools::install_github('nalzok/tree.interpreter')
+```
+
+## Usage
+
 For example, you can calculate the state-of-the-art MDI-oob feature importance
 measure for **ranger**. See `vignette('MDI', package='tree.interpreter')` for
 more information.
@@ -25,14 +35,11 @@ mtcars.MDIoob <- MDIoob(tidy.RF, mtcars[, -1], mtcars[, 1])
 mtcars.MDIoob
 ```
 
+## References
+
 This package companies the paper [A Debiased MDI Feature Importance Measure for
 Random Forests][debiased].
 
-Before I publish it on CRAN, you can conveniently install it with
-
-```r
-devtools::install_github('nalzok/tree.interpreter')
-```
 
   [treeinterpreter]: https://pypi.org/project/treeinterpreter/
   [debiased]: https://arxiv.org/abs/1906.10845
