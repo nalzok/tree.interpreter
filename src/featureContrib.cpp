@@ -67,7 +67,6 @@ arma::mat trainsetBiasTreeCpp(
         const Rcpp::List & tidyRF,
         const int tree) {
 
-    const int num_classes = tidyRF["num.classes"];
     const Rcpp::List node_responses_ensemble = tidyRF["node.resp"];
     const arma::mat node_responses = node_responses_ensemble[tree];
     const arma::mat trainset_bias_tree(node_responses.row(0));
