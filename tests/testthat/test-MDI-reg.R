@@ -39,7 +39,7 @@ test_that('MDIoob works for ranger & regression tree', {
   rfobj <- ranger(mpg ~ ., mtcars, keep.inbag = TRUE)
   tidy.RF <- tidyRF(rfobj, mtcars[, -1], mtcars[, 1])
 
-  mtcars.MDIoob <- MDI(tidy.RF, mtcars[, -1], mtcars[, 1])
+  mtcars.MDIoob <- MDIoob(tidy.RF, mtcars[, -1], mtcars[, 1])
   expect_equal(dim(mtcars.MDIoob), c(ncol(mtcars) - 1, 1))
   expect_equal(dimnames(mtcars.MDIoob),
                list(names(mtcars[, -1]),
@@ -51,7 +51,7 @@ test_that('MDIoob works for randomForest & regression tree', {
   rfobj <- randomForest(mpg ~ ., mtcars, keep.inbag = TRUE)
   tidy.RF <- tidyRF(rfobj, mtcars[, -1], mtcars[, 1])
 
-  mtcars.MDIoob <- MDI(tidy.RF, mtcars[, -1], mtcars[, 1])
+  mtcars.MDIoob <- MDIoob(tidy.RF, mtcars[, -1], mtcars[, 1])
   expect_equal(dim(mtcars.MDIoob), c(ncol(mtcars) - 1, 1))
   expect_equal(dimnames(mtcars.MDIoob),
                list(names(mtcars[, -1]),
