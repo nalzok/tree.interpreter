@@ -5,10 +5,11 @@
 [![Codecov test coverage](https://codecov.io/gh/nalzok/tree.interpreter/branch/master/graph/badge.svg)](https://codecov.io/gh/nalzok/tree.interpreter?branch=master)
 <!-- badges: end -->
 
-An R implementation of the [treeinterpreter][treeinterpreter] package on PyPI.
-Each prediction is decomposed as (bias + feature\_1\_contribution + ... +
-feature\_n\_contribution). This decomposition is then used to calculate the
-MDI and MDI-oob feature importance measures for both trees and forests.
+An R re-implementation of the [treeinterpreter][treeinterpreter] package on
+PyPI. Each prediction can be decomposed as (prediction = bias +
+feature\_1\_contribution + ... + feature\_n\_contribution). This decomposition
+is then used to calculate the MDI and MDI-oob feature importance measures for
+both trees and forests.
 
 ## Installation
 

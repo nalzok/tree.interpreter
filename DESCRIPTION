@@ -5,8 +5,9 @@ Version: 0.1.0
 Date: 2019-10-15
 Author: Qingyao Sun
 Maintainer: Qingyao Sun <sunqingyao19970825@gmail.com>
-Description: An R implementation of the treeinterpreter package on PyPI. Each
-        prediction can be decomposed as (bias + feature_1_contribution + ... +
+Description: An R re-implementation of the 'treeinterpreter' package on PyPI
+        <https://pypi.org/project/treeinterpreter/>. Each prediction can be
+        decomposed as (prediction = bias + feature_1_contribution + ... +
         feature_n_contribution). This decomposition is then used to calculate
         the MDI and MDI-oob feature importance measures for both trees and
         forests.

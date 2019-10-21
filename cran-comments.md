@@ -1,3 +1,9 @@
+## Resubmission
+This is a resubmission. In this version I have:
+
+* Single quoted software names
+* Provided URL to the existing software 'treeinterpreter'
+
 ## Test environments
 * macOS 10.15 (local install), R 3.6.1
 * macOS 10.13.3 (on Travis CI), R 3.6.1
