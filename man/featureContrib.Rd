@@ -15,7 +15,7 @@ with.}
 
 \item{tree}{An integer. The index of the tree to look at.}
 
-\item{X}{A data frame. Samples to be predicted.}
+\item{X}{A data frame. Features of samples to be predicted.}
 }
 \value{
 A cube (3D array). The content depends on the type of the response.
@@ -62,9 +62,11 @@ where MODEL can be either a tree or a forest.
 }
 \section{Functions}{
 \itemize{
-\item \code{featureContribTree}: Feature contribution within a single tree
+\item \code{featureContribTree}: Feature contribution to prediction within a
+single tree
 
-\item \code{featureContrib}: Feature contribution within the whole forest
+\item \code{featureContrib}: Feature contribution to prediction within the
+whole forest
 }}
 
 \references{
@@ -76,4 +78,6 @@ Random forest interpretation with scikit-learn
 }
 \seealso{
 \code{\link{trainsetBias}}
+
+\code{\link{MDI}}
 }

@@ -4,8 +4,8 @@ library(randomForest)
 test_that('trainsetBias works for ranger & classification tree', {
   set.seed(42L)
   trainID <- sample(150, 120)
-  rf <- ranger(Species ~ ., iris[trainID, ], keep.inbag = TRUE)
-  tidy.RF <- tidyRF(rf, iris[trainID, -5], iris[trainID, 5])
+  rfobj <- ranger(Species ~ ., iris[trainID, ], keep.inbag = TRUE)
+  tidy.RF <- tidyRF(rfobj, iris[trainID, -5], iris[trainID, 5])
 
   trainset.bias <- trainsetBias(tidy.RF)
   expect_equal(dim(trainset.bias), c(1, 3))
@@ -16,8 +16,8 @@ test_that('trainsetBias works for ranger & classification tree', {
 test_that('trainsetBias works for randomForest & classification tree', {
   set.seed(42L)
   trainID <- sample(150, 120)
-  rf <- randomForest(Species ~ ., iris[trainID, ], keep.inbag = TRUE)
-  tidy.RF <- tidyRF(rf, iris[trainID, -5], iris[trainID, 5])
+  rfobj <- randomForest(Species ~ ., iris[trainID, ], keep.inbag = TRUE)
+  tidy.RF <- tidyRF(rfobj, iris[trainID, -5], iris[trainID, 5])
 
   trainset.bias <- trainsetBias(tidy.RF)
   expect_equal(dim(trainset.bias), c(1, 3))
@@ -27,10 +27,9 @@ test_that('trainsetBias works for randomForest & classification tree', {
 
 test_that('trainsetBias works for ranger & regression tree', {
   set.seed(42L)
-  trainID <- sample(506, 400)
-  rf <- ranger(medv ~ ., Boston[trainID, ], keep.inbag = TRUE)
-  tidy.RF <-
-      tidyRF(rf, Boston[trainID, -14], Boston[trainID, 14])
+  trainID <- sample(32, 25)
+  rfobj <- ranger(mpg ~ ., mtcars[trainID, ], keep.inbag = TRUE)
+  tidy.RF <- tidyRF(rfobj, mtcars[trainID, -1], mtcars[trainID, 1])
 
   trainset.bias <- trainsetBias(tidy.RF)
   expect_equal(dim(trainset.bias), c(1, 1))
@@ -40,14 +39,12 @@ test_that('trainsetBias works for ranger & regression tree', {
 
 test_that('trainsetBias works for randomForest & regression tree', {
   set.seed(42L)
-  trainID <- sample(506, 400)
-  rf <- randomForest(medv ~ ., Boston[trainID, ], keep.inbag = TRUE)
-  tidy.RF <-
-      tidyRF(rf, Boston[trainID, -14], Boston[trainID, 14])
+  trainID <- sample(32, 25)
+  rfobj <- randomForest(mpg ~ ., mtcars[trainID, ], keep.inbag = TRUE)
+  tidy.RF <- tidyRF(rfobj, mtcars[trainID, -1], mtcars[trainID, 1])
 
   trainset.bias <- trainsetBias(tidy.RF)
   expect_equal(dim(trainset.bias), c(1, 1))
   expect_equal(dimnames(trainset.bias),
                list('Bias', 'Response'))
 })
-

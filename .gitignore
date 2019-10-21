@@ -131,3 +131,5 @@ tags
 **/*.tmp
 inst/doc
 tree.interpreter.Rproj
+doc
+Meta

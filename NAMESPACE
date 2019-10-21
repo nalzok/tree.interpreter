@@ -2,6 +2,10 @@
 
 S3method(tidyRF,randomForest)
 S3method(tidyRF,ranger)
+export(MDI)
+export(MDITree)
+export(MDIoob)
+export(MDIoobTree)
 export(featureContrib)
 export(featureContribTree)
 export(tidyRF)

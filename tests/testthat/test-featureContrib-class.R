@@ -4,8 +4,8 @@ library(randomForest)
 test_that('featureContrib works for ranger & classification tree', {
   set.seed(42L)
   trainID <- sample(150, 120)
-  rf <- ranger(Species ~ ., iris[trainID, ], keep.inbag = TRUE)
-  tidy.RF <- tidyRF(rf, iris[trainID, -5], iris[trainID, 5])
+  rfobj <- ranger(Species ~ ., iris[trainID, ], keep.inbag = TRUE)
+  tidy.RF <- tidyRF(rfobj, iris[trainID, -5], iris[trainID, 5])
 
   feature.contrib <- featureContrib(tidy.RF, iris[-trainID, -5])
   expect_equal(dim(feature.contrib), c(4, 3, 30))
@@ -18,8 +18,8 @@ test_that('featureContrib works for ranger & classification tree', {
 test_that('featureContrib works for randomForest & classification tree', {
   set.seed(42L)
   trainID <- sample(150, 120)
-  rf <- randomForest(Species ~ ., iris[trainID, ], keep.inbag = TRUE)
-  tidy.RF <- tidyRF(rf, iris[trainID, -5], iris[trainID, 5])
+  rfobj <- randomForest(Species ~ ., iris[trainID, ], keep.inbag = TRUE)
+  tidy.RF <- tidyRF(rfobj, iris[trainID, -5], iris[trainID, 5])
 
   feature.contrib <- featureContrib(tidy.RF, iris[-trainID, -5])
   expect_equal(dim(feature.contrib), c(4, 3, 30))
@@ -28,4 +28,3 @@ test_that('featureContrib works for randomForest & classification tree', {
                     levels(iris$Species),
                     as.character(1:30)))
 })
-

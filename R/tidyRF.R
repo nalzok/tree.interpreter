@@ -10,6 +10,7 @@
 #'   \code{randomForest} and \code{ranger}.
 #' @param trainX A data frame. Train set features.
 #' @param trainY A data frame. Train set responses.
+#'
 #' @return A list of class \code{tidyRF}, with entries:
 #'   \describe{
 #'     \item{\code{num.classes}}{An integer. For classification trees, number
