@@ -17,6 +17,8 @@ knitr::opts_chunk$set(
 
 The R package **tree.interpreter** at its core implements the interpretation algorithm proposed by [@saabas_interpreting_2014] for popular RF packages such as **randomForest** and **ranger**. This vignette illustrates how to calculate the MDI, a.k.a Mean Decrease Impurity, and MDI-oob, a debiased MDI feature importance measure proposed by [@li_debiased_2019], with it.
 
+If you use this package for data analysis, please consider citing it with `citation('tree.interpreter')`.
+
 ## Saabas's Prediction Interpretation Algorithm
 
 Let's start with the interpretation algorithm by [@saabas_interpreting_2014]. The idea is to decompose the prediction for a specific sample by looking at the decision rule associated with it.
@@ -79,7 +81,7 @@ library(tree.interpreter)
 
 ### Regression
 
-In the first example, we are going to build a random forest on the Boston housing data set, and calculate the MDI/MDI-oob of each feature.
+In the first example, we build a random forest on the Boston housing data set, and calculate the MDI/MDI-oob of each feature.
 
 ```{r reg}
 # Setup
@@ -99,7 +101,7 @@ t(MDIoob(tidy.RF, Boston[, -14], Boston[, 14]))
 
 ### Classification
 
-In the second example, we are going to build a random forest on Anderson's iris data set, and calculate the MDI/MDI-oob of each feature.
+In the second example, we build a random forest on Anderson's iris data set, and calculate the MDI/MDI-oob of each feature.
 
 ```{r class}
 # Setup

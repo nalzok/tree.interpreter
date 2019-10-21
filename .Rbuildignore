@@ -5,3 +5,4 @@
 ^doc$
 ^Meta$
 ^appveyor\.yml$
+^cran-comments\.md$

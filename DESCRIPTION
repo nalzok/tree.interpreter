@@ -1,14 +1,15 @@
 Package: tree.interpreter
 Type: Package
-Title: Decompose Random Forest Prediction into Trainset Bias and Feature Contribution
+Title: Random Forest Prediction Decomposition and Feature Importance Measure
 Version: 0.1.0
 Date: 2019-10-15
 Author: Qingyao Sun
 Maintainer: Qingyao Sun <sunqingyao19970825@gmail.com>
 Description: An R implementation of the treeinterpreter package on PyPI. Each
-        prediction is decomposed as (bias + feature_1_contribution + ... +
-        feature_n_contribution). This decomposition can then be used as a
-        measure of feature importance.
+        prediction can be decomposed as (bias + feature_1_contribution + ... +
+        feature_n_contribution). This decomposition is then used to calculate
+        the MDI and MDI-oob feature importance measures for both trees and
+        forests.
 Encoding: UTF-8
 License: MIT + file LICENSE
 Imports: Rcpp (>= 1.0.2)
