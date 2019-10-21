@@ -4,7 +4,6 @@ language: R
 os:
   - osx
   - linux
-  - windows
 cache: packages
 after_success:
   - Rscript -e 'covr::codecov()'
