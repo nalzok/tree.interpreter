@@ -5,5 +5,7 @@ os:
   - osx
   - linux
 cache: packages
+before_install:
+  - tlmgr install inconsolata
 after_success:
   - Rscript -e 'covr::codecov()'
