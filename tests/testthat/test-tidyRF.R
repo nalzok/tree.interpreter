@@ -76,7 +76,7 @@ test_that('tidyRF works for ranger when keep.inbag = FALSE', {
   rfobj <- ranger(Species ~ ., iris, keep.inbag = FALSE)
 
   expect_warning(tidy.RF <- tidyRF(rfobj, iris[, -5], iris[, 5]),
-                 'keep.inbag = FALSE, using all observations')
+                 'keep.inbag = FALSE; all samples will be considered in-bag.')
   expect_true('tidyRF' %in% class(tidy.RF))
   expect_equal(names(tidy.RF), expected_names)
   expect_gte(min(sapply(tidy.RF$node.sizes, min)), 1)
@@ -93,7 +93,7 @@ test_that('tidyRF works for randomForest when keep.inbag = FALSE', {
   rfobj <- randomForest(mpg ~ ., mtcars, keep.inbag = FALSE)
 
   expect_warning(tidy.RF <- tidyRF(rfobj, mtcars[, -1], mtcars[, 1]),
-                 'keep.inbag = FALSE, using all observations')
+                 'keep.inbag = FALSE; all samples will be considered in-bag.')
   expect_true('tidyRF' %in% class(tidy.RF))
   expect_equal(names(tidy.RF), expected_names)
   expect_gte(min(sapply(tidy.RF$node.sizes, min)), 0)   # randomForest bug

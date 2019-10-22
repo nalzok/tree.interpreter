@@ -57,6 +57,9 @@ MDIoobTree <- function(tidy.RF, tree, trainX, trainY) {
   inbag.counts <- tidy.RF$inbag.counts[[tree]]
   indices.oob <- !as.logical(inbag.counts)
   X.oob <- trainX[indices.oob, ]
+  if (!nrow(X.oob)) {
+      stop('No out-of-bag data available.')
+  }
   Y.oob <- t(trainY[indices.oob, ])
   ftk.y <- featureContribTree(tidy.RF, tree, X.oob) *
     rep(Y.oob, each=ncol(X.oob))

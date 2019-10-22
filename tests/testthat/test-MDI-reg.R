@@ -81,3 +81,29 @@ test_that('MDIoob works for randomForest & regression tree', {
                list(names(mtcars[, -1]),
                     'Response'))
 })
+
+test_that(paste('MDIoob emits error for ranger & regression tree',
+                'when keep.inbag = FALSE'), {
+  set.seed(42L)
+  rfobj <- ranger(mpg ~ ., mtcars)
+  expect_warning(tidy.RF <- tidyRF(rfobj, mtcars[, -1], mtcars[, 1]),
+                 'keep.inbag = FALSE; all samples will be considered in-bag.')
+
+  expect_error(MDIoobTree(tidy.RF, 1, mtcars[, -1], mtcars[, 1]),
+               'No out-of-bag data available.')
+  expect_error(MDIoob(tidy.RF, mtcars[, -1], mtcars[, 1]),
+               'No out-of-bag data available.')
+})
+
+test_that(paste('MDIoob emits error for randomForest & regression tree',
+                'when keep.inbag = FALSE'), {
+  set.seed(42L)
+  rfobj <- randomForest(mpg ~ ., mtcars)
+  expect_warning(tidy.RF <- tidyRF(rfobj, mtcars[, -1], mtcars[, 1]),
+                 'keep.inbag = FALSE; all samples will be considered in-bag.')
+
+  expect_error(MDIoobTree(tidy.RF, 1, mtcars[, -1], mtcars[, 1]),
+               'No out-of-bag data available.')
+  expect_error(MDIoob(tidy.RF, mtcars[, -1], mtcars[, 1]),
+               'No out-of-bag data available.')
+})

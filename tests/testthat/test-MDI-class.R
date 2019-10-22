@@ -47,8 +47,7 @@ test_that('MDI works for randomForest & classification tree', {
 
 test_that('MDIoob works for ranger & classification tree', {
   set.seed(42L)
-  rfobj <- ranger(Species ~ ., iris,
-                  keep.inbag = TRUE, importance = 'impurity')
+  rfobj <- ranger(Species ~ ., iris, keep.inbag = TRUE)
   tidy.RF <- tidyRF(rfobj, iris[, -5], iris[, 5])
 
   iris.MDIoobTree <- MDIoobTree(tidy.RF, 1, iris[, -5], iris[, 5])
@@ -66,8 +65,7 @@ test_that('MDIoob works for ranger & classification tree', {
 
 test_that('MDIoob works for randomForest & classification tree', {
   set.seed(42L)
-  rfobj <- randomForest(Species ~ ., iris,
-                        keep.inbag = TRUE, importance = TRUE)
+  rfobj <- randomForest(Species ~ ., iris, keep.inbag = TRUE)
   tidy.RF <- tidyRF(rfobj, iris[, -5], iris[, 5])
 
   iris.MDIoobTree <- MDIoobTree(tidy.RF, 1, iris[, -5], iris[, 5])
@@ -81,4 +79,30 @@ test_that('MDIoob works for randomForest & classification tree', {
   expect_equal(dimnames(iris.MDIoob),
                list(names(iris[, -5]),
                     levels(iris$Species)))
+})
+
+test_that(paste('MDIoob emits error for ranger & classification tree',
+                'when keep.inbag = FALSE'), {
+  set.seed(42L)
+  rfobj <- ranger(Species ~ ., iris)
+  expect_warning(tidy.RF <- tidyRF(rfobj, iris[, -5], iris[, 5]),
+                 'keep.inbag = FALSE; all samples will be considered in-bag.')
+
+  expect_error(MDIoobTree(tidy.RF, 1, iris[, -5], iris[, 5]),
+               'No out-of-bag data available.')
+  expect_error(MDIoob(tidy.RF, iris[, -5], iris[, 5]),
+               'No out-of-bag data available.')
+})
+
+test_that(paste('MDIoob emits error for randomForest & classification tree',
+                'when keep.inbag = FALSE'), {
+  set.seed(42L)
+  rfobj <- randomForest(Species ~ ., iris)
+  expect_warning(tidy.RF <- tidyRF(rfobj, iris[, -5], iris[, 5]),
+                 'keep.inbag = FALSE; all samples will be considered in-bag.')
+
+  expect_error(MDIoobTree(tidy.RF, 1, iris[, -5], iris[, 5]),
+               'No out-of-bag data available.')
+  expect_error(MDIoob(tidy.RF, iris[, -5], iris[, 5]),
+               'No out-of-bag data available.')
 })

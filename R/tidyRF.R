@@ -60,7 +60,7 @@ tidyRF.randomForest <- function(rfobj, trainX, trainY) {
                               rep(1:ncol(rfobj$inbag),
                                   each = nrow(rfobj$inbag)))
     } else {
-        warning('keep.inbag = FALSE, using all observations')
+        warning('keep.inbag = FALSE; all samples will be considered in-bag.')
         inbag.counts <- replicate(rfobj$ntree, rep(1, nrow(trainX)),
                                   simplify=FALSE)
     }
@@ -74,7 +74,7 @@ tidyRF.randomForest <- function(rfobj, trainX, trainY) {
 tidyRF.ranger <- function(rfobj, trainX, trainY) {
     inbag.counts <- rfobj$inbag.counts
     if (is.null(inbag.counts)) {
-        warning('keep.inbag = FALSE, using all observations')
+        warning('keep.inbag = FALSE; all samples will be considered in-bag.')
         inbag.counts <- replicate(rfobj$num.trees, rep(1, nrow(trainX)),
                                   simplify=FALSE)
     }
