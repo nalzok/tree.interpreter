@@ -7,7 +7,8 @@ os:
 sudo: required
 cache: packages
 before_script:
-  - sudo tlmgr option repository http://mirrors.rit.edu/CTAN/systems/texlive/tlnet
-  - sudo tlmgr update --self
+  - sudo env PATH="$PATH" tlmgr option repository http://mirrors.rit.edu/CTAN/systems/texlive/tlnet
+  - sudo env PATH="$PATH" tlmgr update --self
+  - sudo env PATH="$PATH" tlmgr install inconsolata upquote courier courier-scaled helvetic
 after_success:
   - Rscript -e 'covr::codecov()'
