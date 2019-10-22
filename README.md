@@ -9,7 +9,8 @@ An R re-implementation of the [treeinterpreter][treeinterpreter] package on
 PyPI. Each prediction can be decomposed as (prediction = bias +
 feature\_1\_contribution + ... + feature\_n\_contribution). This decomposition
 is then used to calculate the MDI and MDI-oob feature importance measures for
-both trees and forests.
+both trees and forests based on the work of Li et al. (2019)
+<arXiv:1906.10845>.
 
 ## Installation
 

@@ -4,7 +4,7 @@
 #' prediction can be decomposed as (prediction = bias + feature_1_contribution
 #' + ... + feature_n_contribution). This decomposition is then used to
 #' calculate the MDI and MDI-oob feature importance measures for both trees and
-#' forests.
+#' forests based on the work of Li et al. (2019) <arXiv:1906.10845>.
 #' 
 #' @section \code{tidyRF}:
 #' The function \code{tidyRF} can turn a \code{randomForest} or \code{ranger}

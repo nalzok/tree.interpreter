@@ -17,7 +17,7 @@ citEntry(entry = "Article",
   keywords     = "Statistics - Machine Learning, Computer Science - Machine Learning",
   annote       = "Comment: The first two authors contributed equally to this paper",
   textVersion  =
-  paste("Li, Xiao, Yu Wang, Sumanta Basu, Karl Kumbier, and Bin Yu. 2019.",
+  paste("Xiao Li, Yu Wang, Sumanta Basu, Karl Kumbier, and Bin Yu. 2019.",
         "“A Debiased MDI Feature Importance Measure for Random Forests.”",
         "arXiv:1906.10845 [Cs, Stat], June. http://arxiv.org/abs/1906.10845.")
 )
