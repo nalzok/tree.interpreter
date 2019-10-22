@@ -35,3 +35,10 @@ performance in feature selection for both simulated and real data. It can be
 calculated with functions from the \code{MDIoob} family.
 }
 
+\examples{
+library(ranger)
+rfobj <- ranger(mpg ~ ., mtcars, keep.inbag = TRUE)
+tidy.RF <- tidyRF(rfobj, mtcars[, -1], mtcars[, 1])
+MDIoob(tidy.RF, mtcars[, -1], mtcars[, 1])
+
+}

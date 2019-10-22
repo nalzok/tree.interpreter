@@ -7,6 +7,12 @@ test_that('MDI works for ranger & classification tree', {
                   keep.inbag = TRUE, importance = 'impurity')
   tidy.RF <- tidyRF(rfobj, iris[, -5], iris[, 5])
 
+  iris.MDITree <- MDITree(tidy.RF, 1, iris[, -5], iris[, 5])
+  expect_equal(dim(iris.MDITree), c(ncol(iris) - 1, nlevels(iris$Species)))
+  expect_equal(dimnames(iris.MDITree),
+               list(names(iris[, -5]),
+                    levels(iris$Species)))
+
   iris.MDI <- MDI(tidy.RF, iris[, -5], iris[, 5])
   expect_equal(dim(iris.MDI), c(ncol(iris) - 1, nlevels(iris$Species)))
   expect_equal(dimnames(iris.MDI),
@@ -22,6 +28,12 @@ test_that('MDI works for randomForest & classification tree', {
   rfobj <- randomForest(Species ~ ., iris,
                         keep.inbag = TRUE, importance = TRUE)
   tidy.RF <- tidyRF(rfobj, iris[, -5], iris[, 5])
+
+  iris.MDITree <- MDITree(tidy.RF, 1, iris[, -5], iris[, 5])
+  expect_equal(dim(iris.MDITree), c(ncol(iris) - 1, nlevels(iris$Species)))
+  expect_equal(dimnames(iris.MDITree),
+               list(names(iris[, -5]),
+                    levels(iris$Species)))
 
   iris.MDI <- MDI(tidy.RF, iris[, -5], iris[, 5])
   expect_equal(dim(iris.MDI), c(ncol(iris) - 1, nlevels(iris$Species)))
@@ -39,6 +51,12 @@ test_that('MDIoob works for ranger & classification tree', {
                   keep.inbag = TRUE, importance = 'impurity')
   tidy.RF <- tidyRF(rfobj, iris[, -5], iris[, 5])
 
+  iris.MDIoobTree <- MDIoobTree(tidy.RF, 1, iris[, -5], iris[, 5])
+  expect_equal(dim(iris.MDIoobTree), c(ncol(iris) - 1, nlevels(iris$Species)))
+  expect_equal(dimnames(iris.MDIoobTree),
+               list(names(iris[, -5]),
+                    levels(iris$Species)))
+
   iris.MDIoob <- MDIoob(tidy.RF, iris[, -5], iris[, 5])
   expect_equal(dim(iris.MDIoob), c(ncol(iris) - 1, nlevels(iris$Species)))
   expect_equal(dimnames(iris.MDIoob),
@@ -51,6 +69,12 @@ test_that('MDIoob works for randomForest & classification tree', {
   rfobj <- randomForest(Species ~ ., iris,
                         keep.inbag = TRUE, importance = TRUE)
   tidy.RF <- tidyRF(rfobj, iris[, -5], iris[, 5])
+
+  iris.MDIoobTree <- MDIoobTree(tidy.RF, 1, iris[, -5], iris[, 5])
+  expect_equal(dim(iris.MDIoobTree), c(ncol(iris) - 1, nlevels(iris$Species)))
+  expect_equal(dimnames(iris.MDIoobTree),
+               list(names(iris[, -5]),
+                    levels(iris$Species)))
 
   iris.MDIoob <- MDIoob(tidy.RF, iris[, -5], iris[, 5])
   expect_equal(dim(iris.MDIoob), c(ncol(iris) - 1, nlevels(iris$Species)))

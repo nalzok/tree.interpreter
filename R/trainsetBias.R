@@ -38,6 +38,13 @@
 #'   \url{http://blog.datadive.net/random-forest-interpretation-with-scikit-learn/}
 #' @seealso \code{\link{featureContrib}}
 #'
+#' @examples
+#' library(ranger)
+#' rfobj <- ranger(Species ~ ., iris, keep.inbag=TRUE)
+#' tidy.RF <- tidyRF(rfobj, iris[, -5], iris[, 5])
+#' trainsetBiasTree(tidy.RF, 1)
+#' trainsetBias(tidy.RF)
+#'
 #' @export
 trainsetBiasTree <- function(tidy.RF, tree) {
     result <- trainsetBiasTreeCpp(tidy.RF, tree - 1)

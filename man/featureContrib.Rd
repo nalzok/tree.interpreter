@@ -69,6 +69,15 @@ single tree
 whole forest
 }}
 
+\examples{
+library(ranger)
+test.id <- 50 * seq(3)
+rfobj <- ranger(Species ~ ., iris[-test.id, ], keep.inbag=TRUE)
+tidy.RF <- tidyRF(rfobj, iris[-test.id, -5], iris[-test.id, 5])
+featureContribTree(tidy.RF, 1, iris[test.id, -5])
+featureContrib(tidy.RF, iris[test.id, -5])
+
+}
 \references{
 Interpreting random forests
   \url{http://blog.datadive.net/interpreting-random-forests/}

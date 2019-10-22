@@ -42,6 +42,12 @@
 #'       nodes and themselves.}
 #'   }
 #'
+#' @examples
+#' library(ranger)
+#' rfobj <- ranger(Species ~ ., iris, keep.inbag=TRUE)
+#' tidy.RF <- tidyRF(rfobj, iris[, -5], iris[, 5])
+#' str(tidy.RF, max.level=1)
+#'
 #' @export
 tidyRF <- function(rfobj, trainX, trainY) {
     UseMethod('tidyRF')

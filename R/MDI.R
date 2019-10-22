@@ -33,8 +33,25 @@
 #' @seealso \code{\link{MDIoob}}
 #' @seealso \code{vignette('MDI', package='tree.interpreter')}
 #'
+#' @examples
+#' library(ranger)
+#' rfobj <- ranger(Species ~ ., iris, keep.inbag=TRUE)
+#' tidy.RF <- tidyRF(rfobj, iris[, -5], iris[, 5])
+#' MDITree(tidy.RF, 1, iris[, -5], iris[, 5])
+#' MDI(tidy.RF, iris[, -5], iris[, 5])
+#'
 #' @export
 MDITree <- function(tidy.RF, tree, trainX, trainY) {
+  if (tidy.RF$num.classes > 1) {
+    # One-hot encode classification responses
+    onehot <- matrix(0, nrow=length(trainY), ncol=tidy.RF$num.classes)
+    indice <- matrix(c(1:length(trainY), trainY[1:length(trainY)]), ncol = 2)
+    onehot[indice] <- 1
+    trainY <- onehot
+  } else {
+    trainY <- matrix(trainY)
+  }
+
   inbag.counts <- tidy.RF$inbag.counts[[tree]]
   inbag.indices <- as.logical(inbag.counts)
   X.inbag <- trainX[inbag.indices, ]
@@ -49,16 +66,6 @@ MDITree <- function(tidy.RF, tree, trainX, trainY) {
 #' @describeIn MDI Mean decrease in impurity within the whole forest
 #' @export
 MDI <- function(tidy.RF, trainX, trainY) {
-  if (tidy.RF$num.classes > 1) {
-    # One-hot encode classification responses
-    onehot <- matrix(0, nrow=length(trainY), ncol=tidy.RF$num.classes)
-    indice <- matrix(c(1:length(trainY), trainY[1:length(trainY)]), ncol = 2)
-    onehot[indice] <- 1
-    trainY <- onehot
-  } else {
-    trainY <- matrix(trainY)
-  }
-
   Reduce(`+`, lapply(1:tidy.RF$num.trees,
                      function(tree)
                          MDITree(tidy.RF, tree, trainX, trainY))) /

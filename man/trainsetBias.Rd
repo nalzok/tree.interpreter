@@ -51,6 +51,14 @@ where MODEL can be either a tree or a forest.
 \item \code{trainsetBias}: Trainset bias within the whole forest
 }}
 
+\examples{
+library(ranger)
+rfobj <- ranger(Species ~ ., iris, keep.inbag=TRUE)
+tidy.RF <- tidyRF(rfobj, iris[, -5], iris[, 5])
+trainsetBiasTree(tidy.RF, 1)
+trainsetBias(tidy.RF)
+
+}
 \references{
 Interpreting random forests
   \url{http://blog.datadive.net/interpreting-random-forests/}

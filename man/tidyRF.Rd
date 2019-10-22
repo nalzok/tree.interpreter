@@ -53,3 +53,10 @@ information on demand, in order to provide a uniform interface for other
 \code{tree.interpreter} functions. Note that the output is of a private
 format, and is subject to change.
 }
+\examples{
+library(ranger)
+rfobj <- ranger(Species ~ ., iris, keep.inbag=TRUE)
+tidy.RF <- tidyRF(rfobj, iris[, -5], iris[, 5])
+str(tidy.RF, max.level=1)
+
+}

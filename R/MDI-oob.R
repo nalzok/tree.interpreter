@@ -35,8 +35,25 @@
 #' @seealso \code{\link{MDI}}
 #' @seealso \code{vignette('MDI', package='tree.interpreter')}
 #'
+#' @examples
+#' library(ranger)
+#' rfobj <- ranger(Species ~ ., iris, keep.inbag=TRUE)
+#' tidy.RF <- tidyRF(rfobj, iris[, -5], iris[, 5])
+#' MDIoobTree(tidy.RF, 1, iris[, -5], iris[, 5])
+#' MDIoob(tidy.RF, iris[, -5], iris[, 5])
+#'
 #' @export
 MDIoobTree <- function(tidy.RF, tree, trainX, trainY) {
+  if (tidy.RF$num.classes > 1) {
+    # One-hot encode classification responses
+    onehot <- matrix(0, nrow=length(trainY), ncol=tidy.RF$num.classes)
+    indice <- matrix(c(1:length(trainY), trainY[1:length(trainY)]), ncol = 2)
+    onehot[indice] <- 1
+    trainY <- onehot
+  } else {
+    trainY <- matrix(trainY)
+  }
+
   inbag.counts <- tidy.RF$inbag.counts[[tree]]
   indices.oob <- !as.logical(inbag.counts)
   X.oob <- trainX[indices.oob, ]
@@ -50,16 +67,6 @@ MDIoobTree <- function(tidy.RF, tree, trainX, trainY) {
 #'   forest
 #' @export
 MDIoob <- function(tidy.RF, trainX, trainY) {
-  if (tidy.RF$num.classes > 1) {
-    # One-hot encode classification responses
-    onehot <- matrix(0, nrow=length(trainY), ncol=tidy.RF$num.classes)
-    indice <- matrix(c(1:length(trainY), trainY[1:length(trainY)]), ncol = 2)
-    onehot[indice] <- 1
-    trainY <- onehot
-  } else {
-    trainY <- matrix(trainY)
-  }
-
   Reduce(`+`, lapply(1:tidy.RF$num.trees,
                      function(tree)
                          MDIoobTree(tidy.RF, tree, trainX, trainY))) /

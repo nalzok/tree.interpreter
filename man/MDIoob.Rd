@@ -52,6 +52,14 @@ See \code{vignette('MDI', package='tree.interpreter')} for more context.
 forest
 }}
 
+\examples{
+library(ranger)
+rfobj <- ranger(Species ~ ., iris, keep.inbag=TRUE)
+tidy.RF <- tidyRF(rfobj, iris[, -5], iris[, 5])
+MDIoobTree(tidy.RF, 1, iris[, -5], iris[, 5])
+MDIoob(tidy.RF, iris[, -5], iris[, 5])
+
+}
 \references{
 A Debiased MDI Feature Importance Measure for Random Forests
   \url{https://arxiv.org/abs/1906.10845}

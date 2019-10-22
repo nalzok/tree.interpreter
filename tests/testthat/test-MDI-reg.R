@@ -7,6 +7,12 @@ test_that('MDI works for ranger & regression tree', {
                   keep.inbag = TRUE, importance = 'impurity')
   tidy.RF <- tidyRF(rfobj, mtcars[, -1], mtcars[, 1])
 
+  mtcars.MDITree <- MDITree(tidy.RF, 1, mtcars[, -1], mtcars[, 1])
+  expect_equal(dim(mtcars.MDITree), c(ncol(mtcars) - 1, 1))
+  expect_equal(dimnames(mtcars.MDITree),
+               list(names(mtcars[, -1]),
+                    'Response'))
+
   mtcars.MDI <- MDI(tidy.RF, mtcars[, -1], mtcars[, 1])
   expect_equal(dim(mtcars.MDI), c(ncol(mtcars) - 1, 1))
   expect_equal(dimnames(mtcars.MDI),
@@ -22,6 +28,12 @@ test_that('MDI works for randomForest & regression tree', {
   rfobj <- randomForest(mpg ~ ., mtcars,
                         keep.inbag = TRUE, importance = TRUE)
   tidy.RF <- tidyRF(rfobj, mtcars[, -1], mtcars[, 1])
+
+  mtcars.MDITree <- MDITree(tidy.RF, 1, mtcars[, -1], mtcars[, 1])
+  expect_equal(dim(mtcars.MDITree), c(ncol(mtcars) - 1, 1))
+  expect_equal(dimnames(mtcars.MDITree),
+               list(names(mtcars[, -1]),
+                    'Response'))
 
   mtcars.MDI <- MDI(tidy.RF, mtcars[, -1], mtcars[, 1])
   expect_equal(dim(mtcars.MDI), c(ncol(mtcars) - 1, 1))
@@ -39,6 +51,12 @@ test_that('MDIoob works for ranger & regression tree', {
   rfobj <- ranger(mpg ~ ., mtcars, keep.inbag = TRUE)
   tidy.RF <- tidyRF(rfobj, mtcars[, -1], mtcars[, 1])
 
+  mtcars.MDIoobTree <- MDIoobTree(tidy.RF, 1, mtcars[, -1], mtcars[, 1])
+  expect_equal(dim(mtcars.MDIoobTree), c(ncol(mtcars) - 1, 1))
+  expect_equal(dimnames(mtcars.MDIoobTree),
+               list(names(mtcars[, -1]),
+                    'Response'))
+
   mtcars.MDIoob <- MDIoob(tidy.RF, mtcars[, -1], mtcars[, 1])
   expect_equal(dim(mtcars.MDIoob), c(ncol(mtcars) - 1, 1))
   expect_equal(dimnames(mtcars.MDIoob),
@@ -50,6 +68,12 @@ test_that('MDIoob works for randomForest & regression tree', {
   set.seed(42L)
   rfobj <- randomForest(mpg ~ ., mtcars, keep.inbag = TRUE)
   tidy.RF <- tidyRF(rfobj, mtcars[, -1], mtcars[, 1])
+
+  mtcars.MDIoobTree <- MDIoobTree(tidy.RF, 1, mtcars[, -1], mtcars[, 1])
+  expect_equal(dim(mtcars.MDIoobTree), c(ncol(mtcars) - 1, 1))
+  expect_equal(dimnames(mtcars.MDIoobTree),
+               list(names(mtcars[, -1]),
+                    'Response'))
 
   mtcars.MDIoob <- MDIoob(tidy.RF, mtcars[, -1], mtcars[, 1])
   expect_equal(dim(mtcars.MDIoob), c(ncol(mtcars) - 1, 1))

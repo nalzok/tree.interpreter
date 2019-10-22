@@ -49,6 +49,14 @@ See \code{vignette('MDI', package='tree.interpreter')} for more context.
 \item \code{MDI}: Mean decrease in impurity within the whole forest
 }}
 
+\examples{
+library(ranger)
+rfobj <- ranger(Species ~ ., iris, keep.inbag=TRUE)
+tidy.RF <- tidyRF(rfobj, iris[, -5], iris[, 5])
+MDITree(tidy.RF, 1, iris[, -5], iris[, 5])
+MDI(tidy.RF, iris[, -5], iris[, 5])
+
+}
 \references{
 A Debiased MDI Feature Importance Measure for Random Forests
   \url{https://arxiv.org/abs/1906.10845}
