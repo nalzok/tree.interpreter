@@ -20,6 +20,10 @@ Before I publish it on CRAN, you can conveniently install it with
 devtools::install_github('nalzok/tree.interpreter')
 ```
 
+macOS users might want to follow the set up instructions by [The Coatless
+Professor][coatless] to minimize operational headaches and maximize
+computational performance.
+
 ## Usage
 
 For example, you can calculate the state-of-the-art MDI-oob feature importance
@@ -45,3 +49,4 @@ Random Forests][debiased].
 
   [treeinterpreter]: https://pypi.org/project/treeinterpreter/
   [debiased]: https://arxiv.org/abs/1906.10845
+  [coatless]: https://thecoatlessprofessor.com/programming/cpp/r-compiler-tools-for-rcpp-on-macos/
