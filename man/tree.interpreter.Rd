@@ -6,11 +6,13 @@
 \alias{tree.interpreter-package}
 \title{Random Forest Prediction Decomposition and Feature Importance Measure}
 \description{
-An R re-implementation of the 'treeinterpreter' package on PyPI. Each
-prediction can be decomposed as (prediction = bias + feature_1_contribution
-+ ... + feature_n_contribution). This decomposition is then used to
-calculate the MDI and MDI-oob feature importance measures for both trees and
-forests based on the work of Li et al. (2019) <arXiv:1906.10845>.
+An R re-implementation of the 'treeinterpreter' package on PyPI.
+<https://pypi.org/project/treeinterpreter/>. Each prediction can be
+decomposed as 'prediction = bias + feature_1_contribution + ... +
+feature_n_contribution'. This decomposition is then used to calculate the
+Mean Decrease Impurity (MDI) and Mean Decrease Impurity using out-of-bag
+samples (MDI-oob) feature importance measures based on the work of Li et al.
+(2019) <arXiv:1906.10845>.
 }
 \section{\code{tidyRF}}{
 

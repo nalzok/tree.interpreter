@@ -1,6 +1,7 @@
 #!/bin/sh
 
-echo 'int main() {}' | clang++ -fopenmp -xc++ - -o /dev/stdout > /dev/null 2>&1
+CXX=`"${R_HOME}/bin/R" CMD config CXX`
+echo 'int main() {}' | $CXX -fopenmp -xc++ - -o /dev/stdout > /dev/null 2>&1
 if [ "$?" -ne 0 ]; then
     sed 's/$(SHLIB_OPENMP_CXXFLAGS)//g' src/Makevars.template > src/Makevars
 else

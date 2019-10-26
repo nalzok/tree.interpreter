@@ -3,6 +3,8 @@ This is a resubmission. In this version I have:
 
 * Single quoted software names
 * Provided URL to the existing software 'treeinterpreter'
+* Explained all acronyms in the description text
+* Added executable examples to illustrate the use of the exported function.
 
 ## Test environments
 * macOS 10.15 (local install), R 3.6.1

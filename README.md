@@ -6,15 +6,21 @@
 <!-- badges: end -->
 
 An R re-implementation of the [treeinterpreter][treeinterpreter] package on
-PyPI. Each prediction can be decomposed as (prediction = bias +
-feature\_1\_contribution + ... + feature\_n\_contribution). This decomposition
-is then used to calculate the MDI and MDI-oob feature importance measures for
-both trees and forests based on the work of Li et al. (2019)
-<arXiv:1906.10845>.
+PyPI. Each prediction can be decomposed as 'prediction = bias +
+feature\_1\_contribution + ... + feature\_n\_contribution'. This decomposition
+is then used to calculate the Mean Decrease Impurity (MDI) and Mean Decrease
+Impurity using out-of-bag samples (MDI-oob) feature importance measures based
+on the work of Li et al. (2019) <arXiv:1906.10845>.
 
 ## Installation
 
-Before I publish it on CRAN, you can conveniently install it with
+To install the CRAN version, run
+
+```r
+install.packages('tree.interpreter')
+```
+
+To install the latest development version, run
 
 ```r
 devtools::install_github('nalzok/tree.interpreter')
