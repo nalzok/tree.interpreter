@@ -1,7 +1,7 @@
 library(ranger)
 library(randomForest)
 
-expected_names <- c("num.classes", "num.trees", "feature.names",
+expected_names <- c("num.trees", "feature.names", "num.classes", "class.names",
                     "inbag.counts", "left.children", "right.children",
                     "split.variables", "split.values", "node.sizes",
                     "node.resp", "delta.node.resp.left",
@@ -19,6 +19,7 @@ test_that('tidyRF works for ranger & classification tree', {
   expect_false(any(sapply(tidy.RF$delta.node.resp.left, anyNA)))
   expect_false(any(sapply(tidy.RF$delta.node.resp.right, anyNA)))
   expect_equal(length(tidy.RF$node.resp), rfobj$num.trees)
+  expect_equal(tidy.RF$class.names, levels(iris$Species))
   expect_equal(colnames(tidy.RF$node.resp[[1]]),
                levels(iris$Species))
 })
@@ -35,6 +36,7 @@ test_that('tidyRF works for randomForest & classification tree', {
   expect_false(any(sapply(tidy.RF$delta.node.resp.left, anyNA)))
   expect_false(any(sapply(tidy.RF$delta.node.resp.right, anyNA)))
   expect_equal(length(tidy.RF$node.resp), rfobj$ntree)
+  expect_equal(tidy.RF$class.names, levels(iris$Species))
   expect_equal(colnames(tidy.RF$node.resp[[1]]),
                levels(iris$Species))
 })
@@ -51,6 +53,7 @@ test_that('tidyRF works for ranger & regression tree', {
   expect_false(any(sapply(tidy.RF$delta.node.resp.left, anyNA)))
   expect_false(any(sapply(tidy.RF$delta.node.resp.right, anyNA)))
   expect_equal(length(tidy.RF$node.resp), rfobj$num.trees)
+  expect_equal(tidy.RF$class.names, 'Response')
   expect_equal(colnames(tidy.RF$node.resp[[1]]),
               'Response')
 })
@@ -67,6 +70,7 @@ test_that('tidyRF works for randomForest & regression tree', {
   expect_false(any(sapply(tidy.RF$delta.node.resp.left, anyNA)))
   expect_false(any(sapply(tidy.RF$delta.node.resp.right, anyNA)))
   expect_equal(length(tidy.RF$node.resp), rfobj$ntree)
+  expect_equal(tidy.RF$class.names, 'Response')
   expect_equal(colnames(tidy.RF$node.resp[[1]]),
               'Response')
 })
@@ -84,6 +88,7 @@ test_that('tidyRF works for ranger when keep.inbag = FALSE', {
   expect_false(any(sapply(tidy.RF$delta.node.resp.left, anyNA)))
   expect_false(any(sapply(tidy.RF$delta.node.resp.right, anyNA)))
   expect_equal(length(tidy.RF$node.resp), rfobj$num.trees)
+  expect_equal(tidy.RF$class.names, levels(iris$Species))
   expect_equal(colnames(tidy.RF$node.resp[[1]]),
                levels(iris$Species))
 })
@@ -101,6 +106,7 @@ test_that('tidyRF works for randomForest when keep.inbag = FALSE', {
   expect_false(any(sapply(tidy.RF$delta.node.resp.left, anyNA)))
   expect_false(any(sapply(tidy.RF$delta.node.resp.right, anyNA)))
   expect_equal(length(tidy.RF$node.resp), rfobj$ntree)
+  expect_equal(tidy.RF$class.names, 'Response')
   expect_equal(colnames(tidy.RF$node.resp[[1]]),
               'Response')
 })

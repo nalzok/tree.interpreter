@@ -17,11 +17,12 @@ tidyRF(rfobj, trainX, trainY)
 \value{
 A list of class \code{tidyRF}, with entries:
   \describe{
+    \item{\code{num.trees}}{An integer. Number of trees.}
+    \item{\code{feature.names}}{A vector. Names of features.}
     \item{\code{num.classes}}{An integer. For classification trees, number
       of classes of the response. For regression trees, this field will
       always be 1.}
-    \item{\code{num.trees}}{An integer. Number of trees.}
-    \item{\code{feature.names}}{A vector. Names of features.}
+    \item{\code{class.names}}{A vector. Names of response classes.}
     \item{\code{inbag.counts}}{A list. For each tree, a vector of the number
        of times the observations are in-bag in the trees.}
     \item{\code{left.children}}{A list. For each tree, a vector of the left

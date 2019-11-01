@@ -70,7 +70,7 @@
 featureContribTree <- function(tidy.RF, tree, X) {
     result <- featureContribTreeCpp(tidy.RF, tree - 1, X)
     result.row.names <- tidy.RF$feature.names
-    result.column.names <- colnames(tidy.RF$delta.node.resp.left[[1]])
+    result.column.names <- tidy.RF$class.names
     result.slice.names <- 1:nrow(X)
     dimnames(result) <- list(result.row.names,
                              result.column.names,

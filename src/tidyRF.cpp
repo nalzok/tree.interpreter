@@ -28,9 +28,11 @@ Rcpp::List tidyRFCpp_randomForest(
     const Rcpp::NumericVector numeric_responses = trainY[0];
     const Rcpp::IntegerVector factor_responses = trainY[0];
 
-    const int num_classes = strcmp(rfobj["type"], "classification")
-        ? 1 : Rcpp::as<Rcpp::CharacterVector>(
-                factor_responses.attr("levels")).size();
+    const Rcpp::CharacterVector class_names =
+        strcmp(rfobj["type"], "classification") == 0
+        ? factor_responses.attr("levels")
+        : Rcpp::CharacterVector::create("Response");
+    const int num_classes = class_names.size();
 
     Rcpp::List left_children_ensemble(num_trees);
     Rcpp::List right_children_ensemble(num_trees);
@@ -124,9 +126,10 @@ Rcpp::List tidyRFCpp_randomForest(
                 );
 
     return Rcpp::List::create(
-            Rcpp::Named("num.classes") = num_classes,
             Rcpp::Named("num.trees") = num_trees,
             Rcpp::Named("feature.names") = feature_names,
+            Rcpp::Named("num.classes") = num_classes,
+            Rcpp::Named("class.names") = class_names,
             Rcpp::Named("inbag.counts") = inbag_counts_ensemble,
             Rcpp::Named("left.children") = left_children_ensemble,
             Rcpp::Named("right.children") = right_children_ensemble,
@@ -164,9 +167,11 @@ Rcpp::List tidyRFCpp_ranger(
             = Rcpp::match(alias_factor_responses, class_values);
     }
 
-    const int num_classes = strcmp(rfobj["treetype"], "Classification")
-        ? 1 : Rcpp::as<Rcpp::CharacterVector>(
-                factor_responses.attr("levels")).size();
+    const Rcpp::CharacterVector class_names =
+        strcmp(rfobj["treetype"], "Classification") == 0
+        ? factor_responses.attr("levels")
+        : Rcpp::CharacterVector::create("Response");
+    const int num_classes = class_names.size();
 
     const Rcpp::List children_ensemble = forest["child.nodeIDs"];
     Rcpp::List left_children_ensemble(num_trees);
@@ -207,9 +212,10 @@ Rcpp::List tidyRFCpp_ranger(
                 );
 
     return Rcpp::List::create(
-            Rcpp::Named("num.classes") = num_classes,
             Rcpp::Named("num.trees") = num_trees,
             Rcpp::Named("feature.names") = original_feature_names,
+            Rcpp::Named("num.classes") = num_classes,
+            Rcpp::Named("class.names") = class_names,
             Rcpp::Named("inbag.counts") = inbag_counts_ensemble,
             Rcpp::Named("left.children") = left_children_ensemble,
             Rcpp::Named("right.children") = right_children_ensemble,
