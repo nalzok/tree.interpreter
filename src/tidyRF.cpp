@@ -188,7 +188,10 @@ Rcpp::List tidyRFCpp_ranger(
     const Rcpp::CharacterVector original_feature_names = trainX.names();
     Rcpp::IntegerVector reorder
         = Rcpp::match(rf_feature_names, original_feature_names) - 1;
-    reorder.push_front(NA_INTEGER);
+    if (forest.containsElementNamed("dependent.varID")) {
+        // For ranger version <0.11.5
+        reorder.push_front(NA_INTEGER);
+    }
 
     Rcpp::List split_variables_ensemble(num_trees);
     for (int tree = 0; tree < num_trees; tree++) {
