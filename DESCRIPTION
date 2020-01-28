@@ -1,8 +1,8 @@
 Package: tree.interpreter
 Type: Package
 Title: Random Forest Prediction Decomposition and Feature Importance Measure
-Version: 0.1.0
-Date: 2019-10-15
+Version: 0.1.1
+Date: 2020-01-28
 Author: Qingyao Sun
 Maintainer: Qingyao Sun <sunqingyao19970825@gmail.com>
 Description: An R re-implementation of the 'treeinterpreter' package on PyPI
@@ -16,7 +16,7 @@ Encoding: UTF-8
 License: MIT + file LICENSE
 Imports: Rcpp (>= 1.0.2)
 LinkingTo: Rcpp, RcppArmadillo
-RoxygenNote: 6.1.1
+RoxygenNote: 7.0.2
 Suggests:
     MASS,
     randomForest,

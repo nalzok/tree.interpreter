@@ -21,11 +21,7 @@ There was 1 NOTE:
     * checking CRAN incoming feasibility ... NOTE
     Maintainer: 'Qingyao Sun <sunqingyao19970825@gmail.com>'
 
-    New submission
+    The Date field is over a month old.
 
-    Possibly mis-spelled words in DESCRIPTION:
-      PyPI (9:68)
-      oob (12:25)
-      treeinterpreter (9:41)
-
-They are not mis-spelled.
+I suppose it is referring to the date 19970825? Well, that is my birthday, and
+obviously I am over a month old! :P

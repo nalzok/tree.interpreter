@@ -3,7 +3,6 @@
 \docType{package}
 \name{tree.interpreter}
 \alias{tree.interpreter}
-\alias{tree.interpreter-package}
 \title{Random Forest Prediction Decomposition and Feature Importance Measure}
 \description{
 An R re-implementation of the 'treeinterpreter' package on PyPI.
