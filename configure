@@ -1,8 +1,6 @@
 #!/bin/sh
 
-CXX11=`"${R_HOME}/bin/R" CMD config CXX11`
-CXX11STD=`"${R_HOME}/bin/R" CMD config CXX11STD`
-CXX="${CXX11} ${CXX11STD}"
+CXX=`"${R_HOME}/bin/R" CMD config CXX`
 
 echo 'int main() {}' | $CXX -fopenmp -xc++ - -o /dev/stdout > /dev/null 2>&1
 if [ "$?" -ne 0 ]; then

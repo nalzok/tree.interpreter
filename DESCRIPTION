@@ -1,9 +1,13 @@
 Package: tree.interpreter
 Type: Package
 Title: Random Forest Prediction Decomposition and Feature Importance Measure
-Version: 0.1.1
-Date: 2020-01-28
+Version: 0.1.2
+Date: 2025-09-17
 Author: Qingyao Sun
+Authors@R: person(given = "Qingyao",
+                  family = "Sun",
+                  role = c("aut", "cre"),
+                  email = "sunqingyao19970825@gmail.com")
 Maintainer: Qingyao Sun <sunqingyao19970825@gmail.com>
 Description: An R re-implementation of the 'treeinterpreter' package on PyPI
         <https://pypi.org/project/treeinterpreter/>. Each prediction can be
@@ -11,7 +15,7 @@ Description: An R re-implementation of the 'treeinterpreter' package on PyPI
         feature_n_contribution'. This decomposition is then used to calculate
         the Mean Decrease Impurity (MDI) and Mean Decrease Impurity using
         out-of-bag samples (MDI-oob) feature importance measures based on the
-        work of Li et al. (2019) <arXiv:1906.10845>.
+        work of Li et al. (2019) <doi:10.48550/arXiv.1906.10845>.
 Encoding: UTF-8
 License: MIT + file LICENSE
 Imports: Rcpp (>= 1.0.2)
