@@ -3,12 +3,10 @@ Type: Package
 Title: Random Forest Prediction Decomposition and Feature Importance Measure
 Version: 0.1.2
 Date: 2025-09-17
-Author: Qingyao Sun
 Authors@R: person(given = "Qingyao",
                   family = "Sun",
                   role = c("aut", "cre"),
                   email = "sunqingyao19970825@gmail.com")
-Maintainer: Qingyao Sun <sunqingyao19970825@gmail.com>
 Description: An R re-implementation of the 'treeinterpreter' package on PyPI
         <https://pypi.org/project/treeinterpreter/>. Each prediction can be
         decomposed as 'prediction = bias + feature_1_contribution + ... +
