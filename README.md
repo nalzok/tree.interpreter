@@ -1,8 +1,8 @@
 # tree.interpreter
 <!-- badges: start -->
-[![Travis build status](https://travis-ci.org/nalzok/tree.interpreter.svg?branch=master)](https://travis-ci.org/nalzok/tree.interpreter)
+[![Travis build status](https://travis-ci.org/nalzok/tree.interpreter.svg?branch=master)](https://app.travis-ci.com/nalzok/tree.interpreter)
 [![AppVeyor build status](https://ci.appveyor.com/api/projects/status/github/nalzok/tree.interpreter?branch=master&svg=true)](https://ci.appveyor.com/project/nalzok/tree.interpreter)
-[![Codecov test coverage](https://codecov.io/gh/nalzok/tree.interpreter/branch/master/graph/badge.svg)](https://codecov.io/gh/nalzok/tree.interpreter?branch=master)
+[![Codecov test coverage](https://codecov.io/gh/nalzok/tree.interpreter/branch/master/graph/badge.svg)](https://app.codecov.io/gh/nalzok/tree.interpreter?branch=master)
 <!-- badges: end -->
 
 An R re-implementation of the [treeinterpreter][treeinterpreter] package on
@@ -55,4 +55,4 @@ Random Forests][debiased].
 
   [treeinterpreter]: https://pypi.org/project/treeinterpreter/
   [debiased]: https://arxiv.org/abs/1906.10845
-  [coatless]: https://thecoatlessprofessor.com/programming/cpp/r-compiler-tools-for-rcpp-on-macos/
+  [coatless]: https://blog.thecoatlessprofessor.com/programming/cpp/r-compiler-tools-for-rcpp-on-macos/index.html
